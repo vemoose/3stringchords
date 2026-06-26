@@ -101,7 +101,7 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
-        "id": "pdf_major",
+        "id": "user_primary",
         "startingFret": 2,
         "positions": [
           {
@@ -172,6 +172,27 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 2,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "pdf_minor",
         "startingFret": 1,
         "positions": [
@@ -222,7 +243,7 @@ export const CHORDS: Chord[] = [
     "quality": "7",
     "variations": [
       {
-        "id": "user_default",
+        "id": "user_primary",
         "startingFret": 9,
         "positions": [
           {
@@ -351,7 +372,7 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
-        "id": "pdf_major",
+        "id": "user_primary",
         "startingFret": 3,
         "positions": [
           {
@@ -422,6 +443,27 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 6,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "user_default",
         "startingFret": 3,
         "positions": [
@@ -471,6 +513,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 1,
@@ -575,7 +638,7 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
-        "id": "pdf_major",
+        "id": "user_primary",
         "startingFret": 4,
         "positions": [
           {
@@ -646,7 +709,7 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
-        "id": "user_default",
+        "id": "user_primary",
         "startingFret": 4,
         "positions": [
           {
@@ -716,6 +779,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 1,
@@ -825,6 +909,27 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "pdf_major",
         "startingFret": 2,
         "positions": [
@@ -896,6 +1001,27 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 5,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "pdf_minor",
         "startingFret": 5,
         "positions": [
@@ -945,6 +1071,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 2,
@@ -1054,7 +1201,7 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
-        "id": "pdf_major",
+        "id": "user_primary",
         "startingFret": 6,
         "positions": [
           {
@@ -1125,6 +1272,27 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 6,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 9,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 6,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 6,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "pdf_minor",
         "startingFret": 6,
         "positions": [
@@ -1174,6 +1342,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 1,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 3,
@@ -1283,7 +1472,7 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
-        "id": "user_default",
+        "id": "user_primary",
         "startingFret": 2,
         "positions": [
           {
@@ -1375,6 +1564,27 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 7,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 10,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 7,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "pdf_minor",
         "startingFret": 7,
         "positions": [
@@ -1424,6 +1634,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 4,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 7,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 4,
@@ -1533,7 +1764,7 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
-        "id": "pdf_major",
+        "id": "user_primary",
         "startingFret": 1,
         "positions": [
           {
@@ -1582,6 +1813,27 @@ export const CHORDS: Chord[] = [
     "suffix": "m",
     "quality": "Minor",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 8,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 11,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 8,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_minor",
         "startingFret": 8,
@@ -1632,6 +1884,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 6,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 5,
@@ -1741,7 +2014,7 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
-        "id": "2nd_inv",
+        "id": "user_primary",
         "startingFret": 1,
         "positions": [
           {
@@ -1812,6 +2085,27 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 3
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "pdf_minor",
         "startingFret": 2,
         "positions": [
@@ -1863,27 +2157,6 @@ export const CHORDS: Chord[] = [
             "finger": 3
           }
         ]
-      },
-      {
-        "id": "2nd_inv",
-        "startingFret": 1,
-        "positions": [
-          {
-            "string": 3,
-            "fret": 4,
-            "finger": 3
-          },
-          {
-            "string": 2,
-            "fret": 2,
-            "finger": 1
-          },
-          {
-            "string": 1,
-            "fret": 0,
-            "finger": 1
-          }
-        ]
       }
     ]
   },
@@ -1893,6 +2166,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 6,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 6,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 9,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 6,
@@ -2023,6 +2317,27 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "pdf_major",
         "startingFret": 1,
         "positions": [
@@ -2072,6 +2387,27 @@ export const CHORDS: Chord[] = [
     "suffix": "m",
     "quality": "Minor",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "2nd_inv",
         "startingFret": 1,
@@ -2143,6 +2479,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 5,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 7,
@@ -2273,6 +2630,27 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 6,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "user_default",
         "startingFret": 3,
         "positions": [
@@ -2323,7 +2701,7 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
-        "id": "user_default",
+        "id": "user_primary",
         "startingFret": 2,
         "positions": [
           {
@@ -2414,6 +2792,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 8,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 9,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 11,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "pdf_primary",
         "startingFret": 8,
@@ -2565,6 +2964,27 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
+        "id": "user_primary",
+        "startingFret": 4,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      },
+      {
         "id": "pdf_major",
         "startingFret": 4,
         "positions": [
@@ -2615,7 +3035,7 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
-        "id": "user_default",
+        "id": "user_primary",
         "startingFret": 3,
         "positions": [
           {
@@ -2727,6 +3147,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "alt_7",
         "startingFret": 1,
@@ -2857,7 +3298,7 @@ export const CHORDS: Chord[] = [
     "quality": "Major",
     "variations": [
       {
-        "id": "pdf_major",
+        "id": "user_primary",
         "startingFret": 1,
         "positions": [
           {
@@ -2928,7 +3369,7 @@ export const CHORDS: Chord[] = [
     "quality": "Minor",
     "variations": [
       {
-        "id": "user_default",
+        "id": "user_primary",
         "startingFret": 1,
         "positions": [
           {
@@ -3019,6 +3460,27 @@ export const CHORDS: Chord[] = [
     "suffix": "7",
     "quality": "7",
     "variations": [
+      {
+        "id": "user_primary",
+        "startingFret": 8,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 11,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 10,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 8,
+            "finger": 1
+          }
+        ]
+      },
       {
         "id": "alt_7",
         "startingFret": 1,
