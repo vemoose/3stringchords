@@ -67,6 +67,7 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose }) => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const animationFrameRef = useRef<number>(0);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
 
   const [pitch, setPitch] = useState<number>(-1);
   const [noteStr, setNoteStr] = useState<string>('--');
@@ -98,7 +99,13 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose }) => {
       }
       const ctx = audioContextRef.current;
       
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+      
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+      
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 2048;
@@ -115,6 +122,10 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose }) => {
   const stopMic = () => {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
+    }
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach(track => track.stop());
+      mediaStreamRef.current = null;
     }
     if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
       audioContextRef.current.suspend();
@@ -222,8 +233,7 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose }) => {
           {/* Arc / Dial background */}
           <div style={{ position: 'absolute', bottom: '10px', width: '200px', height: '100px', borderTopLeftRadius: '100px', borderTopRightRadius: '100px', border: '4px solid var(--border-color)', borderBottom: 'none' }} />
           
-          {/* Target marker (0 cents) */}
-          <div style={{ position: 'absolute', bottom: '10px', width: '4px', height: '15px', backgroundColor: '#10b981' }} />
+
           
           {/* Needle */}
           {pitch !== -1 && (
@@ -232,22 +242,33 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose }) => {
               bottom: '10px', 
               width: '4px', 
               height: '90px', 
-              backgroundColor: getDialColor(),
               transformOrigin: 'bottom center',
               transform: `rotate(${cents * 0.9}deg)`, // Map +/- 50 cents to +/- 45 degrees
-              transition: 'transform 0.1s ease-out, background-color 0.2s',
-              borderRadius: '2px'
-            }} />
+              transition: 'transform 0.1s ease-out',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start'
+            }}>
+              {/* Only the top part of the needle is colored, leaving space for the text */}
+              <div style={{
+                width: '100%',
+                height: '45px',
+                backgroundColor: getDialColor(),
+                borderRadius: '2px',
+                transition: 'background-color 0.2s',
+              }} />
+            </div>
           )}
 
           {/* Note display */}
           <div style={{ 
             position: 'absolute', 
-            bottom: '-20px', 
+            bottom: '-25px', 
             fontSize: '3.5rem', 
             fontWeight: 800, 
             color: getDialColor(),
-            textShadow: '0 2px 10px rgba(0,0,0,0.1)'
+            textShadow: '0 2px 10px rgba(0,0,0,0.1)',
+            zIndex: 10
           }}>
             {pitch === -1 ? '--' : noteStr}
           </div>
