@@ -1,0 +1,517 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap');
+
+:root {
+  /* Premium Color Palette */
+  --brand-accent-light: #6366f1; /* Indigo */
+  --brand-accent-dark: #818cf8;
+  --accent-color: var(--brand-accent-light);
+  
+  --brand-gradient: linear-gradient(135deg, #4f46e5, #ec4899);
+
+  --bg-color-light: #fbfbfc;
+  --bg-color-dark: #090a0f;
+  --bg-color: var(--bg-color-light);
+
+  --surface-color-light: rgba(255, 255, 255, 0.7);
+  --surface-color-dark: rgba(18, 20, 28, 0.7);
+  --surface-color: var(--surface-color-light);
+
+  --text-main-light: #0f172a;
+  --text-main-dark: #f8fafc;
+  --text-main: var(--text-main-light);
+
+  --text-muted-light: #64748b;
+  --text-muted-dark: #94a3b8;
+  --text-muted: var(--text-muted-light);
+
+  --border-color-light: rgba(226, 232, 240, 0.6);
+  --border-color-dark: rgba(30, 41, 59, 0.6);
+  --border-color: var(--border-color-light);
+
+  --shadow-sm-light: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm-dark: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: var(--shadow-sm-light);
+
+  --shadow-lg-light: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg-dark: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(99, 102, 241, 0.1);
+  --shadow-lg: var(--shadow-lg-light);
+
+  /* Fallback for browsers without light-dark support */
+  @media (prefers-color-scheme: dark) {
+    --accent-color: var(--brand-accent-dark);
+    --bg-color: var(--bg-color-dark);
+    --surface-color: var(--surface-color-dark);
+    --text-main: var(--text-main-dark);
+    --text-muted: var(--text-muted-dark);
+    --border-color: var(--border-color-dark);
+    --shadow-sm: var(--shadow-sm-dark);
+    --shadow-lg: var(--shadow-lg-dark);
+  }
+
+  /* Use light-dark() for more concise handling where supported */
+  @supports (color: light-dark(white, black)) {
+    --accent-color: light-dark(var(--brand-accent-light), var(--brand-accent-dark));
+    --bg-color: light-dark(var(--bg-color-light), var(--bg-color-dark));
+    --surface-color: light-dark(var(--surface-color-light), var(--surface-color-dark));
+    --text-main: light-dark(var(--text-main-light), var(--text-main-dark));
+    --text-muted: light-dark(var(--text-muted-light), var(--text-muted-dark));
+    --border-color: light-dark(var(--border-color-light), var(--border-color-dark));
+  }
+
+  /* Automatically adapt native UI to user system preferences */
+  color-scheme: light dark;
+  accent-color: var(--accent-color);
+
+  /* Spacing and Typography */
+  --radius: 16px;
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease;
+}
+
+/* Headings use Outfit for a premium, geometric look */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  background-color: var(--surface-color);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  padding: 0.6rem 1.2rem;
+  border-radius: 9999px; /* Pill shape for premium feel */
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  background-color: light-dark(rgba(255,255,255,0.9), rgba(30,35,45,0.9));
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.primary {
+  background: var(--brand-gradient);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+button.primary:hover {
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background-color: var(--surface-color);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Specific sticky header classes */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background: var(--surface-color);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-color);
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Global Layout Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  width: 100%;
+}
+
+/* Animations */
+@keyframes staggerEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-in {
+  animation: staggerEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0; /* starts hidden */
+}
+
+/* Add delays for children to create stagger effect */
+.chord-grid > *:nth-child(1) { animation-delay: 0.05s; }
+.chord-grid > *:nth-child(2) { animation-delay: 0.10s; }
+.chord-grid > *:nth-child(3) { animation-delay: 0.15s; }
+.chord-grid > *:nth-child(4) { animation-delay: 0.20s; }
+.chord-grid > *:nth-child(5) { animation-delay: 0.25s; }
+.chord-grid > *:nth-child(6) { animation-delay: 0.30s; }
+.chord-grid > *:nth-child(7) { animation-delay: 0.35s; }
+.chord-grid > *:nth-child(8) { animation-delay: 0.40s; }
+
+/* Micro-animations */
+@keyframes icon-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.icon-pop-active {
+  animation: icon-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* View Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+/* Dialog and Overlay */
+dialog.expanded-chord-modal {
+  margin: auto;
+  border: none;
+  background: transparent;
+  padding: 0;
+  overflow: visible;
+  max-width: 90vw;
+  max-height: 90vh;
+  outline: none;
+}
+
+dialog.expanded-chord-modal::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Specific View Transition Classes */
+.vt-expanded-card {
+  view-transition-name: expanded-card;
+}
+
+::view-transition-old(expanded-card),
+::view-transition-new(expanded-card) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Filter Chips */
+.filter-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.filter-chip {
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.filter-chip:hover {
+  background-color: var(--surface-color);
+  color: var(--text-main);
+  border-color: #666;
+}
+
+.filter-chip.active {
+  background-color: var(--brand-accent-light);
+  color: #fff;
+  border-color: var(--brand-accent-light);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+}
+
+/* Family Section Headers */
+.family-section {
+  margin-bottom: 3rem;
+}
+
+.family-section-header {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Custom Dropdown Styles */
+.dropdown-option {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  background-color: transparent;
+  color: var(--text-main);
+}
+
+.fretboard-wrapper {
+  overflow-x: auto;
+  padding-bottom: 2rem;
+  padding-top: 1rem;
+  padding-right: 2rem;
+}
+
+.tuning-info {
+  color: var(--text-muted);
+  margin: 0;
+  margin-top: -0.5rem;
+}
+
+/* Fretboard Styles */
+.fretboard {
+  position: relative;
+  background: linear-gradient(180deg, #1e1e1e 0%, #151515 100%);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  height: 220px;
+  min-width: 800px;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.fret-col {
+  flex: 1;
+  border-right: 2px solid #444;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.fret-col.nut {
+  flex: 0.2;
+  border-right: 6px solid #e5e5e5;
+  background: #111;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.fret-number {
+  position: absolute;
+  bottom: -30px;
+  width: 100%;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.fret-number.open-label {
+  left: -10px;
+  width: auto;
+}
+
+.fret-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.fret-marker.double-1 { top: 25%; }
+.fret-marker.double-2 { top: 75%; }
+
+.string-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--pos);
+  height: var(--thick);
+  background: linear-gradient(180deg, #999 0%, #666 100%);
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.note-circle {
+  position: absolute;
+  left: 50%;
+  top: var(--pos);
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-gradient);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: transform 0.2s;
+  cursor: default;
+}
+
+.note-circle:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  z-index: 3;
+}
+
+.note-circle.open {
+  left: -15px; /* Offset to the left of the nut */
+  background: #2a2a2a;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+@media (max-width: 768px) {
+  .fretboard-wrapper {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 2rem;
+    padding-top: 1rem;
+    padding-right: 0;
+  }
+
+  .fretboard {
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+    height: auto;
+    min-height: 800px;
+    background: linear-gradient(90deg, #1e1e1e 0%, #151515 100%);
+  }
+  
+  .fret-col {
+    border-right: none;
+    border-bottom: 2px solid #444;
+    flex-direction: row;
+  }
+  
+  .fret-col.nut {
+    border-right: none;
+    border-bottom: 6px solid #e5e5e5;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 0;
+  }
+  
+  .string-line {
+    top: 0;
+    bottom: 0;
+    left: calc(100% - var(--pos));
+    width: var(--thick);
+    height: auto;
+    background: linear-gradient(90deg, #999 0%, #666 100%);
+  }
+  
+  .note-circle {
+    left: calc(100% - var(--pos));
+    top: 50%;
+  }
+  
+  .note-circle.open {
+    left: calc(100% - var(--pos));
+    top: -15px; /* Offset above the nut */
+  }
+
+  .fret-number {
+    bottom: auto;
+    top: 50%;
+    right: 25px; /* changed from -25px so it's inside the fretboard */
+    width: auto;
+    transform: translateY(-50%);
+  }
+
+  .fret-number.open-label {
+    top: 25px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .fret-marker.double-1 { top: 50%; left: 25%; }
+  .fret-marker.double-2 { top: 50%; left: 75%; }
+}
+
+.dropdown-option:hover {
+  background-color: var(--border-color);
+}
+
+.dropdown-option.selected {
+  background-color: rgba(99, 102, 241, 0.1);
+  color: var(--brand-accent-light);
+}
+
+.dropdown-option.selected:hover {
+  background-color: rgba(99, 102, 241, 0.2);
+}
