@@ -114,14 +114,29 @@ export const ChordCard: React.FC<ChordCardProps> = ({ chord, isSaved, onToggleSa
       </div>
 
       {chord.variations.length > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <button onClick={handlePrevVariation} style={{ padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '1fr auto 1fr', 
+          alignItems: 'center', 
+          gap: '1rem', 
+          width: '100%',
+          marginTop: '0.5rem',
+          paddingTop: '1rem',
+          borderTop: '1px solid var(--border-color)'
+        }}>
+          <button 
+            onClick={handlePrevVariation} 
+            className="secondary"
+            style={{ padding: '0.4rem 0', fontSize: '0.85rem', borderRadius: '20px', width: '100%', display: 'flex', justifyContent: 'center' }}>
             &larr; Prev
           </button>
-          <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500, textAlign: 'center' }}>
             Var {variationIndex + 1}/{chord.variations.length}
           </span>
-          <button onClick={handleNextVariation} style={{ padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}>
+          <button 
+            onClick={handleNextVariation} 
+            className="secondary"
+            style={{ padding: '0.4rem 0', fontSize: '0.85rem', borderRadius: '20px', width: '100%', display: 'flex', justifyContent: 'center' }}>
             Next &rarr;
           </button>
         </div>
