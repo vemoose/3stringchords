@@ -299,11 +299,7 @@ function App() {
             {FAMILY_ORDER.filter(family => groupedChords[family]?.length > 0).map(family => (
               <div key={family} className="family-section">
                 <h3 className="family-section-header">{family}</h3>
-                <div className="chord-grid" style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                  gap: '2rem'
-                }}>
+                <div className="chord-grid chord-grid-responsive">
                   {groupedChords[family].map((chord, idx) => {
                     const isExpanded = expandedChordInfo?.chord.id === chord.id;
                     
@@ -324,11 +320,7 @@ function App() {
             ))}
           </div>
         ) : (
-          <div className="chord-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-            gap: '2rem'
-          }}>
+          <div className="chord-grid chord-grid-responsive">
             {Object.values(groupedChords).flat().map((chord, idx) => {
               const initialVar = savedItems.find(item => item.chordId === chord.id)?.variationId;
               const isExpanded = expandedChordInfo?.chord.id === chord.id;
