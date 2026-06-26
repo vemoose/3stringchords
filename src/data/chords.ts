@@ -212,27 +212,6 @@ export const CHORDS: Chord[] = [
             "finger": 3
           }
         ]
-      },
-      {
-        "id": "2nd_inv",
-        "startingFret": 1,
-        "positions": [
-          {
-            "string": 3,
-            "fret": 2,
-            "finger": 1
-          },
-          {
-            "string": 2,
-            "fret": 0,
-            "finger": 1
-          },
-          {
-            "string": 1,
-            "fret": 1,
-            "finger": 4
-          }
-        ]
       }
     ]
   },
@@ -260,27 +239,6 @@ export const CHORDS: Chord[] = [
             "string": 1,
             "fret": 9,
             "finger": 1
-          }
-        ]
-      },
-      {
-        "id": "root_7",
-        "startingFret": 1,
-        "positions": [
-          {
-            "string": 3,
-            "fret": 2,
-            "finger": 1
-          },
-          {
-            "string": 2,
-            "fret": 0,
-            "finger": 1
-          },
-          {
-            "string": 1,
-            "fret": 2,
-            "finger": 2
           }
         ]
       }
@@ -1110,27 +1068,6 @@ export const CHORDS: Chord[] = [
             "string": 1,
             "fret": 3,
             "finger": 3
-          }
-        ]
-      },
-      {
-        "id": "root_7",
-        "startingFret": 5,
-        "positions": [
-          {
-            "string": 3,
-            "fret": 5,
-            "finger": 3
-          },
-          {
-            "string": 2,
-            "fret": 3,
-            "finger": 1
-          },
-          {
-            "string": 1,
-            "fret": 3,
-            "finger": 1
           }
         ]
       }
@@ -3056,27 +2993,6 @@ export const CHORDS: Chord[] = [
         ]
       },
       {
-        "id": "pdf_minor",
-        "startingFret": 3,
-        "positions": [
-          {
-            "string": 2,
-            "fret": 3,
-            "finger": 3
-          },
-          {
-            "string": 3,
-            "fret": 0,
-            "finger": 1
-          },
-          {
-            "string": 1,
-            "fret": 0,
-            "finger": 1
-          }
-        ]
-      },
-      {
         "id": "pdf_primary",
         "startingFret": 3,
         "positions": [
@@ -3381,27 +3297,6 @@ export const CHORDS: Chord[] = [
             "string": 2,
             "fret": 1,
             "finger": 1
-          },
-          {
-            "string": 1,
-            "fret": 1,
-            "finger": 1
-          }
-        ]
-      },
-      {
-        "id": "pdf_minor",
-        "startingFret": 1,
-        "positions": [
-          {
-            "string": 3,
-            "fret": 1,
-            "finger": 1
-          },
-          {
-            "string": 2,
-            "fret": 4,
-            "finger": 3
           },
           {
             "string": 1,
