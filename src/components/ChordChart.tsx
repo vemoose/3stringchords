@@ -1,19 +1,24 @@
 import type { ChordVariation } from '../data/chords';
 
 export const ChordChart = ({ variation }: { variation: ChordVariation }) => {
-  let { startingFret } = variation;
   const { positions } = variation;
 
-  // Calculate the highest fret used in this variation
-  const maxFret = Math.max(0, ...positions.map(p => p.fret));
+  const activeFrets = positions.map(p => p.fret).filter(f => f > 0);
+  const maxFret = activeFrets.length > 0 ? Math.max(...activeFrets) : 0;
+  const minFret = activeFrets.length > 0 ? Math.min(...activeFrets) : 1;
 
-  // If the chord can fit entirely within the first 5 frets, anchor it to the nut (fret 1)
-  if (maxFret <= 5) {
-    startingFret = 1;
-  }
-
-  // The user wants exactly 5 frets to show for a uniform look
   const numFrets = 5;
+  let startingFret = variation.startingFret;
+
+  if (maxFret <= numFrets) {
+    startingFret = 1;
+  } else {
+    // Start at minFret, but adjust if maxFret gets pushed off the bottom
+    startingFret = minFret;
+    if (maxFret >= startingFret + numFrets) {
+      startingFret = Math.max(1, maxFret - numFrets + 1);
+    }
+  }
 
   const stringSpacing = 30;
   const fretSpacing = 35;

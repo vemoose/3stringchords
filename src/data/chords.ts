@@ -178,7 +178,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 5,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
@@ -336,12 +336,12 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 3,
-            "finger": 2
+            "finger": 1
           },
           {
             "string": 1,
             "fret": 3,
-            "finger": 3
+            "finger": 1
           },
           {
             "string": 2,
@@ -407,7 +407,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 6,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
@@ -483,7 +483,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 1,
             "fret": 3,
-            "finger": 1
+            "finger": 3
           },
           {
             "string": 2,
@@ -526,35 +526,6 @@ export const CHORDS: Chord[] = [
             "string": 1,
             "fret": 1,
             "finger": 1
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "asharp_m7",
-    "root": "A#",
-    "suffix": "m7",
-    "quality": "m7",
-    "variations": [
-      {
-        "id": "root_m7",
-        "startingFret": 1,
-        "positions": [
-          {
-            "string": 3,
-            "fret": 3,
-            "finger": 4
-          },
-          {
-            "string": 2,
-            "fret": -1,
-            "finger": 1
-          },
-          {
-            "string": 1,
-            "fret": 1,
-            "finger": 2
           }
         ]
       }
@@ -744,7 +715,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 2,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 2,
@@ -754,7 +725,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 1,
             "fret": 4,
-            "finger": 1
+            "finger": 4
           }
         ]
       },
@@ -878,7 +849,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 1,
             "fret": 5,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 3,
@@ -965,7 +936,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 8,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
@@ -1036,7 +1007,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 3,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 2,
@@ -1215,7 +1186,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 9,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
@@ -1286,12 +1257,12 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 4,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
             "fret": 3,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 1,
@@ -1507,7 +1478,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 10,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
@@ -1578,7 +1549,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 5,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 2,
@@ -1588,7 +1559,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 1,
             "fret": 7,
-            "finger": 1
+            "finger": 4
           }
         ]
       },
@@ -1757,7 +1728,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 11,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
@@ -1828,12 +1799,12 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 6,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
             "fret": 5,
-            "finger": 1
+            "finger": 3
           },
           {
             "string": 1,
@@ -1957,17 +1928,17 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 4,
-            "finger": 3
+            "finger": 4
           },
           {
             "string": 2,
             "fret": 2,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 1,
             "fret": 1,
-            "finger": 2
+            "finger": 1
           }
         ]
       },
@@ -2110,7 +2081,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 7,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 2,
@@ -2120,7 +2091,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 1,
             "fret": 9,
-            "finger": 1
+            "finger": 4
           }
         ]
       },
@@ -2265,12 +2236,12 @@ export const CHORDS: Chord[] = [
           {
             "string": 2,
             "fret": 3,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 1,
             "fret": 5,
-            "finger": 1
+            "finger": 4
           }
         ]
       },
@@ -2336,12 +2307,12 @@ export const CHORDS: Chord[] = [
           {
             "string": 2,
             "fret": 3,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 1,
             "fret": 5,
-            "finger": 1
+            "finger": 4
           }
         ]
       },
@@ -2423,12 +2394,12 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 8,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
             "fret": 7,
-            "finger": 1
+            "finger": 3
           },
           {
             "string": 1,
@@ -2578,12 +2549,12 @@ export const CHORDS: Chord[] = [
           {
             "string": 2,
             "fret": 4,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 1,
             "fret": 6,
-            "finger": 1
+            "finger": 4
           }
         ]
       },
@@ -2736,7 +2707,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 9,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 2,
@@ -2746,7 +2717,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 1,
             "fret": 11,
-            "finger": 1
+            "finger": 4
           }
         ]
       },
@@ -3070,7 +3041,7 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 4,
-            "finger": 1
+            "finger": 2
           },
           {
             "string": 2,
@@ -3362,12 +3333,12 @@ export const CHORDS: Chord[] = [
           {
             "string": 3,
             "fret": 11,
-            "finger": 1
+            "finger": 4
           },
           {
             "string": 2,
             "fret": 10,
-            "finger": 1
+            "finger": 3
           },
           {
             "string": 1,
