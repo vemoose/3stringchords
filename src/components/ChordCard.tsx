@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import type { Chord, ChordVariation } from '../data/chords';
+import { formatChordName } from '../data/chords';
 import { ChordChart } from './ChordChart';
-
-const ENHARMONIC_MAP: Record<string, string> = {
-  'C#': 'Db',
-  'D#': 'Eb',
-  'F#': 'Gb',
-  'G#': 'Ab',
-  'A#': 'Bb'
-};
 
 interface ChordCardProps {
   chord: Chord;
@@ -85,7 +78,7 @@ export const ChordCard: React.FC<ChordCardProps> = ({ chord, isSaved, onToggleSa
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           <h3 style={{ margin: 0, fontSize: '1.25rem' }}>
-            {chord.root}{ENHARMONIC_MAP[chord.root] ? ` / ${ENHARMONIC_MAP[chord.root]}` : ''} {chord.quality}
+            {formatChordName(chord.root, chord.suffix)}
           </h3>
           <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500 }}>
             Frets: {[3, 2, 1].map(strNum => {

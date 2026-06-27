@@ -7,7 +7,7 @@ import { FretboardMap } from './components/FretboardMap';
 import { CustomDropdown } from './components/CustomDropdown';
 import { isChordInScale, SCALE_TYPES } from './data/scales';
 import type { ScaleType } from './data/scales';
-import { GDG_CHORDS, DAD_CHORDS } from './data/chords';
+import { GDG_CHORDS, DAD_CHORDS, EBE_CHORDS, formatChordName } from './data/chords';
 import type { Chord, Tuning } from './data/chords';
 
 type ViewMode = 'library' | 'practice';
@@ -61,7 +61,7 @@ function App() {
   const [activeScaleType, setActiveScaleType] = useState<ScaleType>('Major');
   const dialogRef = useRef<HTMLDialogElement>(null);
   
-  const currentChords = activeTuning === 'GDG' ? GDG_CHORDS : DAD_CHORDS;
+  const currentChords = activeTuning === 'GDG' ? GDG_CHORDS : activeTuning === 'DAD' ? DAD_CHORDS : EBE_CHORDS;
 
   // Load saved chords on mount
   useEffect(() => {
@@ -91,7 +91,8 @@ function App() {
 
     const baseFiltered = currentChords.filter(chord => {
       const matchSearch = searchTerm === '' || 
-        `${chord.root} ${chord.quality}`.toLowerCase().includes(normalizedSearch);
+        `${chord.root} ${chord.quality}`.toLowerCase().includes(normalizedSearch) ||
+        formatChordName(chord.root, chord.suffix).toLowerCase().includes(normalizedSearch);
       
       let matchScale = true;
       if (activeKey !== 'Any Key') {
@@ -137,7 +138,8 @@ function App() {
         .replace(/bb/g, 'a#');
         
       const matchSearch = searchTerm === '' || 
-        `${chord.root} ${chord.quality}`.toLowerCase().includes(normalizedSearch);
+        `${chord.root} ${chord.quality}`.toLowerCase().includes(normalizedSearch) ||
+        formatChordName(chord.root, chord.suffix).toLowerCase().includes(normalizedSearch);
       
       let matchChip = true;
       if (activeChip === 'Essential') {
@@ -342,7 +344,8 @@ function App() {
                 onChange={(val) => setActiveTuning(val as Tuning)}
                 options={[
                   { value: 'GDG', label: 'G-D-G' },
-                  { value: 'DAD', label: 'D-A-D' }
+                  { value: 'DAD', label: 'D-A-D' },
+                  { value: 'EBE', label: 'E-B-E' }
                 ]}
               />
             </div>

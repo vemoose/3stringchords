@@ -18,6 +18,11 @@ const TUNINGS = {
     { name: 'D4', rootNoteIndex: 2, thickness: 1 }, // index 2 is D
     { name: 'A3', rootNoteIndex: 9, thickness: 2 }, // index 9 is A
     { name: 'D3', rootNoteIndex: 2, thickness: 3 }, // index 2 is D
+  ],
+  'EBE': [
+    { name: 'E4', rootNoteIndex: 4, thickness: 1 }, // index 4 is E
+    { name: 'B3', rootNoteIndex: 11, thickness: 2 }, // index 11 is B
+    { name: 'E3', rootNoteIndex: 4, thickness: 3 }, // index 4 is E
   ]
 };
 

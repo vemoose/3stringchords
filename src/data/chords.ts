@@ -44,7 +44,23 @@ export const CHORD_QUALITIES = [
   { value: 'sus', label: 'Suspended', suffix: 'sus' },
 ];
 
-export type Tuning = 'GDG' | 'DAD';
+export const ENHARMONIC_MAP: Record<string, string> = {
+  'C#': 'Db',
+  'D#': 'Eb',
+  'F#': 'Gb',
+  'G#': 'Ab',
+  'A#': 'Bb'
+};
+
+export const formatChordName = (root: string, suffix: string): string => {
+  const enharmonic = ENHARMONIC_MAP[root];
+  if (enharmonic) {
+    return `${root}${suffix} / ${enharmonic}${suffix}`;
+  }
+  return `${root}${suffix}`;
+};
+
+export type Tuning = 'GDG' | 'DAD' | 'EBE';
 
 export const GDG_CHORDS: Chord[] = [
   {
@@ -4660,6 +4676,705 @@ export const DAD_CHORDS: Chord[] = [
             "string": 1,
             "fret": 4,
             "finger": 1
+          }
+        ]
+      }
+    ]
+  }
+];
+
+export const EBE_CHORDS: Chord[] = [
+  {
+    "id": "e",
+    "root": "E",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "em",
+    "root": "E",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e7",
+    "root": "E",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fsharp",
+    "root": "F#",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 5,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 9,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 6,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fsharpm",
+    "root": "F#",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fsharp7",
+    "root": "F#",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g",
+    "root": "G",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gm",
+    "root": "G",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 6,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g7",
+    "root": "G",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 1,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a",
+    "root": "A",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "am",
+    "root": "A",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 4,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 5,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 8,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a7",
+    "root": "A",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 5,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b",
+    "root": "B",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 10,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 14,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 12,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 11,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bm",
+    "root": "B",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 6,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 10,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b7",
+    "root": "B",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 4,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b5",
+    "root": "B",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 2,
+            "finger": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c",
+    "root": "C",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 1,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cm",
+    "root": "C",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 7,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 8,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 11,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c7",
+    "root": "C",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 5,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 8,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 6,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "csharpm",
+    "root": "C#",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d",
+    "root": "D",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 2,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dm",
+    "root": "D",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 9,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 10,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 10,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 13,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d7",
+    "root": "D",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 7,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 10,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 10,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 8,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gsharpm",
+    "root": "G#",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 2
           }
         ]
       }
