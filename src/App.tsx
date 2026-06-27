@@ -7,7 +7,7 @@ import { FretboardMap } from './components/FretboardMap';
 import { CustomDropdown } from './components/CustomDropdown';
 import { isChordInScale, SCALE_TYPES } from './data/scales';
 import type { ScaleType } from './data/scales';
-import { GDG_CHORDS, DAD_CHORDS, EBE_CHORDS, formatChordName } from './data/chords';
+import { GDG_CHORDS, DAD_CHORDS, EBE_CHORDS, AEA_CHORDS, CGC_CHORDS, formatChordName } from './data/chords';
 import type { Chord, Tuning } from './data/chords';
 
 type ViewMode = 'library' | 'practice';
@@ -61,7 +61,7 @@ function App() {
   const [activeScaleType, setActiveScaleType] = useState<ScaleType>('Major');
   const dialogRef = useRef<HTMLDialogElement>(null);
   
-  const currentChords = activeTuning === 'GDG' ? GDG_CHORDS : activeTuning === 'DAD' ? DAD_CHORDS : EBE_CHORDS;
+  const currentChords = activeTuning === 'GDG' ? GDG_CHORDS : activeTuning === 'DAD' ? DAD_CHORDS : activeTuning === 'EBE' ? EBE_CHORDS : activeTuning === 'AEA' ? AEA_CHORDS : CGC_CHORDS;
 
   // Load saved chords on mount
   useEffect(() => {
@@ -345,7 +345,9 @@ function App() {
                 options={[
                   { value: 'GDG', label: 'G-D-G' },
                   { value: 'DAD', label: 'D-A-D' },
-                  { value: 'EBE', label: 'E-B-E' }
+                  { value: 'EBE', label: 'E-B-E' },
+                  { value: 'AEA', label: 'A-E-A (Beta)' },
+                  { value: 'CGC', label: 'C-G-C (Beta)' }
                 ]}
               />
             </div>

@@ -23,6 +23,16 @@ const TUNINGS = {
     { name: 'E4', rootNoteIndex: 4, thickness: 1 }, // index 4 is E
     { name: 'B3', rootNoteIndex: 11, thickness: 2 }, // index 11 is B
     { name: 'E3', rootNoteIndex: 4, thickness: 3 }, // index 4 is E
+  ],
+  'AEA': [
+    { name: 'A4', rootNoteIndex: 9, thickness: 1 }, // index 9 is A
+    { name: 'E4', rootNoteIndex: 4, thickness: 2 }, // index 4 is E
+    { name: 'A3', rootNoteIndex: 9, thickness: 3 }, // index 9 is A
+  ],
+  'CGC': [
+    { name: 'C4', rootNoteIndex: 0, thickness: 1 }, // index 0 is C
+    { name: 'G3', rootNoteIndex: 7, thickness: 2 }, // index 7 is G
+    { name: 'C3', rootNoteIndex: 0, thickness: 3 }, // index 0 is C
   ]
 };
 
@@ -89,8 +99,13 @@ export const FretboardMap: React.FC<FretboardMapProps> = ({ isOpen, onClose, tun
           </button>
         </div>
 
-        <p className="tuning-info">
-          {tuning === 'GDG' ? 'Standard Open G Tuning (G-D-G).' : 'Open D Tuning (D-A-D).'} All notes up to the 19th fret.
+        <p className="tuning-info" style={{ color: 'var(--text-muted)' }}>
+          {tuning === 'GDG' && 'Standard Open G Tuning (G-D-G).'}
+          {tuning === 'DAD' && 'Open D Tuning (D-A-D).'}
+          {tuning === 'EBE' && 'Open E Tuning (E-B-E).'}
+          {tuning === 'AEA' && 'Open A Tuning (A-E-A).'}
+          {tuning === 'CGC' && 'Open C Tuning (C-G-C).'}
+          {' '}All notes up to the 19th fret.
         </p>
 
         <div className="fretboard-wrapper">

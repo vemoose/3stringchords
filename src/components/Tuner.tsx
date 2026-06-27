@@ -356,7 +356,7 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose, tuning }) => {
                 High D
               </button>
             </>
-          ) : (
+          ) : tuning === 'EBE' ? (
             <>
               <button 
                 className={`primary ${playingTone === 'Low E' ? 'playing' : ''}`}
@@ -390,6 +390,78 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose, tuning }) => {
                 style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'High E' ? 1 : 0.8 }}
               >
                 High E
+              </button>
+            </>
+          ) : tuning === 'AEA' ? (
+            <>
+              <button 
+                className={`primary ${playingTone === 'Low A' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(110.00, 'Low A')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(110.00, 'Low A')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Low A' ? 1 : 0.8 }}
+              >
+                Low A
+              </button>
+              <button 
+                className={`primary ${playingTone === 'Middle E' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(164.81, 'Middle E')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(164.81, 'Middle E')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Middle E' ? 1 : 0.8 }}
+              >
+                Mid E
+              </button>
+              <button 
+                className={`primary ${playingTone === 'High A' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(220.00, 'High A')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(220.00, 'High A')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'High A' ? 1 : 0.8 }}
+              >
+                High A
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                className={`primary ${playingTone === 'Low C' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(130.81, 'Low C')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(130.81, 'Low C')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Low C' ? 1 : 0.8 }}
+              >
+                Low C
+              </button>
+              <button 
+                className={`primary ${playingTone === 'Middle G' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(196.00, 'Middle G')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(196.00, 'Middle G')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Middle G' ? 1 : 0.8 }}
+              >
+                Mid G
+              </button>
+              <button 
+                className={`primary ${playingTone === 'High C' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(261.63, 'High C')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(261.63, 'High C')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'High C' ? 1 : 0.8 }}
+              >
+                High C
               </button>
             </>
           )}
