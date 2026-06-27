@@ -5,14 +5,12 @@ export const FILTER_CHIPS = [
   { id: 'Essential', label: 'Essential' },
   { id: 'Major', label: 'Major' },
   { id: 'Minor', label: 'Minor' },
-  { id: '5', label: '5' },
-  { id: '7', label: '7' },
-  { id: 'maj7', label: 'maj7' },
-  { id: 'm7', label: 'm7' },
-  { id: '6', label: '6' },
-  { id: 'sus', label: 'sus' },
-  { id: 'dim', label: 'dim' },
-  { id: 'aug', label: 'aug' },
+  { id: 'Power', label: 'Power' },
+  { id: '7th', label: '7th' },
+  { id: 'Extended', label: 'Extended' },
+  { id: 'Sus', label: 'Sus' },
+  { id: 'Dim', label: 'Dim' },
+  { id: 'Aug', label: 'Aug' },
 ];
 
 interface FilterBarProps {
@@ -20,13 +18,15 @@ interface FilterBarProps {
   onSearchChange: (term: string) => void;
   activeChip: string;
   onChipChange: (chipId: string) => void;
+  availableChips?: Set<string>;
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({ 
   searchTerm, 
   onSearchChange,
   activeChip,
-  onChipChange
+  onChipChange,
+  availableChips
 }) => {
   return (
     <div style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -61,15 +61,18 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       <div className="filter-chips-container">
-        {FILTER_CHIPS.map(chip => (
-          <button
-            key={chip.id}
-            onClick={() => onChipChange(chip.id)}
-            className={`filter-chip ${activeChip === chip.id ? 'active' : ''}`}
-          >
-            {chip.label}
-          </button>
-        ))}
+        {FILTER_CHIPS.map(chip => {
+          if (availableChips && !availableChips.has(chip.id)) return null;
+          return (
+            <button
+              key={chip.id}
+              onClick={() => onChipChange(chip.id)}
+              className={`filter-chip ${activeChip === chip.id ? 'active' : ''}`}
+            >
+              {chip.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

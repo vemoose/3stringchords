@@ -41,9 +41,12 @@ export const CHORD_QUALITIES = [
   { value: 'Minor', label: 'Minor', suffix: 'm' },
   { value: '7', label: 'Dominant 7', suffix: '7' },
   { value: 'm7', label: 'Minor 7', suffix: 'm7' },
+  { value: 'sus', label: 'Suspended', suffix: 'sus' },
 ];
 
-export const CHORDS: Chord[] = [
+export type Tuning = 'GDG' | 'DAD';
+
+export const GDG_CHORDS: Chord[] = [
   {
     "id": "a_power",
     "root": "A",
@@ -3415,6 +3418,1248 @@ export const CHORDS: Chord[] = [
             "string": 1,
             "fret": 11,
             "finger": 2
+          }
+        ]
+      }
+    ]
+  }
+];
+
+export const DAD_CHORDS: Chord[] = [
+  {
+    "id": "d_power5",
+    "root": "D",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_0_0_0",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 0,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dsharp_power5",
+    "root": "D#",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_1_1_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 1,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e_power5",
+    "root": "E",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_2_2_2",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 2,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f_power5",
+    "root": "F",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_3_3_3",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 1
+          }
+        ]
+      },
+      {
+        "id": "var_x_3_3",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fsharp_power5",
+    "root": "F#",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_4_4_4",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g_power5",
+    "root": "G",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_5_5_5",
+        "startingFret": 4,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 1
+          }
+        ]
+      },
+      {
+        "id": "var_x_5_5",
+        "startingFret": 4,
+        "positions": [
+          {
+            "string": 2,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gsharp_power5",
+    "root": "G#",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_6_6_6",
+        "startingFret": 5,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 6,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 6,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 6,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a_power5",
+    "root": "A",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_7_7_7",
+        "startingFret": 6,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 7,
+            "finger": 1
+          }
+        ]
+      },
+      {
+        "id": "var_2_0_2",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 2,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "asharp_power5",
+    "root": "A#",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_8_8_8",
+        "startingFret": 7,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 8,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b_power5",
+    "root": "B",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_9_9_9",
+        "startingFret": 8,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 9,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 9,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 9,
+            "finger": 1
+          }
+        ]
+      },
+      {
+        "id": "var_4_2_4",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 3
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c_power5",
+    "root": "C",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_10_10_10",
+        "startingFret": 9,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 10,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 10,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 10,
+            "finger": 1
+          }
+        ]
+      },
+      {
+        "id": "var_5_3_5",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 3
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "csharp_power5",
+    "root": "C#",
+    "quality": "Power (5)",
+    "suffix": "5",
+    "variations": [
+      {
+        "id": "var_11_11_11",
+        "startingFret": 10,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 11,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 11,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 11,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "asharp_major",
+    "root": "A#",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_0_1_3",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a_minor",
+    "root": "A",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_7_7_10",
+        "startingFret": 6,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 10,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b_major",
+    "root": "B",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_1_2_4",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b_minor",
+    "root": "B",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_0_2_4",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c_major",
+    "root": "C",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_2_3_5",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c_minor",
+    "root": "C",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_1_3_5",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 3
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d_major",
+    "root": "D",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_0_0_4",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d_minor",
+    "root": "D",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_0_0_3",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 3,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d_suspended",
+    "root": "D",
+    "quality": "Suspended",
+    "suffix": "sus",
+    "variations": [
+      {
+        "id": "var_0_0_5",
+        "startingFret": 4,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e_major",
+    "root": "E",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_2_2_6",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 6,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e_minor",
+    "root": "E",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_2_2_5",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e_suspended",
+    "root": "E",
+    "quality": "Suspended",
+    "suffix": "sus",
+    "variations": [
+      {
+        "id": "var_7_7_9",
+        "startingFret": 6,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 9,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f_major",
+    "root": "F",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_7_8_10",
+        "startingFret": 6,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 7,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 8,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 10,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f_minor",
+    "root": "F",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_6_8_10",
+        "startingFret": 5,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 6,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 8,
+            "finger": 3
+          },
+          {
+            "string": 1,
+            "fret": 10,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g_major",
+    "root": "G",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_0_2_5",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 4
+          }
+        ]
+      },
+      {
+        "id": "var_5_5_9",
+        "startingFret": 4,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 5,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 9,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g_minor",
+    "root": "G",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_0_1_5",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 1,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 4
+          }
+        ]
+      },
+      {
+        "id": "var_0_10_8",
+        "startingFret": 7,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 10,
+            "finger": 3
+          },
+          {
+            "string": 1,
+            "fret": 8,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g_suspended",
+    "root": "G",
+    "quality": "Suspended",
+    "suffix": "sus",
+    "variations": [
+      {
+        "id": "var_0_3_5",
+        "startingFret": 2,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 5,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fsharp_major",
+    "root": "F#",
+    "quality": "Major",
+    "suffix": "",
+    "variations": [
+      {
+        "id": "var_4_4_8",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 8,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fsharp_minor",
+    "root": "F#",
+    "quality": "Minor",
+    "suffix": "m",
+    "variations": [
+      {
+        "id": "var_4_4_7",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 7,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a_7",
+    "root": "A",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_6_7_7",
+        "startingFret": 5,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 6,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 7,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 7,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b_7",
+    "root": "B",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_8_9_9",
+        "startingFret": 7,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 8,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 9,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 9,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c_7",
+    "root": "C",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_9_10_10",
+        "startingFret": 8,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 9,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 10,
+            "finger": 2
+          },
+          {
+            "string": 1,
+            "fret": 10,
+            "finger": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d_7",
+    "root": "D",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_0_4_7",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 0,
+            "finger": 1
+          },
+          {
+            "string": 2,
+            "fret": 4,
+            "finger": 1
+          },
+          {
+            "string": 1,
+            "fret": 7,
+            "finger": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e_7",
+    "root": "E",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_2_2_1",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 2,
+            "finger": 2
+          },
+          {
+            "string": 2,
+            "fret": 2,
+            "finger": 3
+          },
+          {
+            "string": 1,
+            "fret": 1,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f_7",
+    "root": "F",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_3_3_2",
+        "startingFret": 1,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 3,
+            "finger": 2
+          },
+          {
+            "string": 2,
+            "fret": 3,
+            "finger": 3
+          },
+          {
+            "string": 1,
+            "fret": 2,
+            "finger": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "g_7",
+    "root": "G",
+    "quality": "7",
+    "suffix": "7",
+    "variations": [
+      {
+        "id": "var_5_5_4",
+        "startingFret": 3,
+        "positions": [
+          {
+            "string": 3,
+            "fret": 5,
+            "finger": 2
+          },
+          {
+            "string": 2,
+            "fret": 5,
+            "finger": 3
+          },
+          {
+            "string": 1,
+            "fret": 4,
+            "finger": 1
           }
         ]
       }

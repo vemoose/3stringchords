@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import type { Tuning } from '../data/chords';
 
 interface TunerProps {
   isOpen: boolean;
   onClose: () => void;
+  tuning: Tuning;
 }
 
 const NOTE_STRINGS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -61,7 +63,7 @@ function autoCorrelate(buffer: Float32Array, sampleRate: number) {
   return sampleRate / T0;
 }
 
-export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose }) => {
+export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose, tuning }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -224,7 +226,7 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose }) => {
         }}
         onClick={e => e.stopPropagation()}
       >
-        <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>GDG Tuner</h2>
+        <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>{tuning === 'GDG' ? 'GDG Tuner' : 'DAD Tuner'}</h2>
         
         {micError && <p style={{ color: '#ef4444', fontSize: '0.9rem', textAlign: 'center' }}>{micError}</p>}
         
@@ -282,39 +284,79 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose }) => {
         
         <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-muted)' }}>Reference Tones</h3>
         <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
-          <button 
-            className={`primary ${playingTone === 'Low G' ? 'playing' : ''}`}
-            onMouseDown={() => playTone(98.00, 'Low G')}
-            onMouseUp={stopTone}
-            onMouseLeave={stopTone}
-            onTouchStart={() => playTone(98.00, 'Low G')}
-            onTouchEnd={stopTone}
-            style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Low G' ? 1 : 0.8 }}
-          >
-            Low G
-          </button>
-          <button 
-            className={`primary ${playingTone === 'Middle D' ? 'playing' : ''}`}
-            onMouseDown={() => playTone(146.83, 'Middle D')}
-            onMouseUp={stopTone}
-            onMouseLeave={stopTone}
-            onTouchStart={() => playTone(146.83, 'Middle D')}
-            onTouchEnd={stopTone}
-            style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Middle D' ? 1 : 0.8 }}
-          >
-            Mid D
-          </button>
-          <button 
-            className={`primary ${playingTone === 'High G' ? 'playing' : ''}`}
-            onMouseDown={() => playTone(196.00, 'High G')}
-            onMouseUp={stopTone}
-            onMouseLeave={stopTone}
-            onTouchStart={() => playTone(196.00, 'High G')}
-            onTouchEnd={stopTone}
-            style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'High G' ? 1 : 0.8 }}
-          >
-            High G
-          </button>
+          {tuning === 'GDG' ? (
+            <>
+              <button 
+                className={`primary ${playingTone === 'Low G' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(98.00, 'Low G')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(98.00, 'Low G')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Low G' ? 1 : 0.8 }}
+              >
+                Low G
+              </button>
+              <button 
+                className={`primary ${playingTone === 'Middle D' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(146.83, 'Middle D')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(146.83, 'Middle D')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Middle D' ? 1 : 0.8 }}
+              >
+                Mid D
+              </button>
+              <button 
+                className={`primary ${playingTone === 'High G' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(196.00, 'High G')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(196.00, 'High G')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'High G' ? 1 : 0.8 }}
+              >
+                High G
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                className={`primary ${playingTone === 'Low D' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(146.83, 'Low D')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(146.83, 'Low D')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Low D' ? 1 : 0.8 }}
+              >
+                Low D
+              </button>
+              <button 
+                className={`primary ${playingTone === 'Middle A' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(220.00, 'Middle A')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(220.00, 'Middle A')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'Middle A' ? 1 : 0.8 }}
+              >
+                Mid A
+              </button>
+              <button 
+                className={`primary ${playingTone === 'High D' ? 'playing' : ''}`}
+                onMouseDown={() => playTone(293.66, 'High D')}
+                onMouseUp={stopTone}
+                onMouseLeave={stopTone}
+                onTouchStart={() => playTone(293.66, 'High D')}
+                onTouchEnd={stopTone}
+                style={{ flex: 1, padding: '0.75rem', opacity: playingTone === 'High D' ? 1 : 0.8 }}
+              >
+                High D
+              </button>
+            </>
+          )}
         </div>
         <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>Press and hold to play</p>
 

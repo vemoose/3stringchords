@@ -4,8 +4,11 @@ import { FilterBar } from './components/FilterBar';
 import { ChordCard } from './components/ChordCard';
 import { Tuner } from './components/Tuner';
 import { FretboardMap } from './components/FretboardMap';
-import { CHORDS } from './data/chords';
-import type { Chord } from './data/chords';
+import { CustomDropdown } from './components/CustomDropdown';
+import { isChordInScale, SCALE_TYPES } from './data/scales';
+import type { ScaleType } from './data/scales';
+import { GDG_CHORDS, DAD_CHORDS } from './data/chords';
+import type { Chord, Tuning } from './data/chords';
 
 type ViewMode = 'library' | 'practice';
 
@@ -26,17 +29,39 @@ const QUALITY_TO_FAMILY: Record<string, string> = {
   'Power (5)': 'Power / 5',
   '7': '7th',
   'm7': 'Minor 7',
+  'Suspended': 'Suspended',
 };
+
+const KEY_OPTIONS = [
+  { value: 'Any Key', label: 'Any Key' },
+  { value: 'C', label: 'C' },
+  { value: 'C# / Db', label: 'C# / Db' },
+  { value: 'D', label: 'D' },
+  { value: 'D# / Eb', label: 'D# / Eb' },
+  { value: 'E', label: 'E' },
+  { value: 'F', label: 'F' },
+  { value: 'F# / Gb', label: 'F# / Gb' },
+  { value: 'G', label: 'G' },
+  { value: 'G# / Ab', label: 'G# / Ab' },
+  { value: 'A', label: 'A' },
+  { value: 'A# / Bb', label: 'A# / Bb' },
+  { value: 'B', label: 'B' }
+];
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeChip, setActiveChip] = useState('All');
   const [viewMode, setViewMode] = useState<ViewMode>('library');
-  const [savedItems, setSavedItems] = useState<{ chordId: string; variationId: string }[]>([]);
+  const [savedItems, setSavedItems] = useState<{ chordId: string; variationId: string; tuning?: string }[]>([]);
   const [expandedChordInfo, setExpandedChordInfo] = useState<{ chord: Chord, variationId: string } | null>(null);
   const [isTunerOpen, setIsTunerOpen] = useState(false);
   const [isFretboardOpen, setIsFretboardOpen] = useState(false);
+  const [activeTuning, setActiveTuning] = useState<Tuning>('GDG');
+  const [activeKey, setActiveKey] = useState<string>('Any Key');
+  const [activeScaleType, setActiveScaleType] = useState<ScaleType>('Major');
   const dialogRef = useRef<HTMLDialogElement>(null);
+  
+  const currentChords = activeTuning === 'GDG' ? GDG_CHORDS : DAD_CHORDS;
 
   // Load saved chords on mount
   useEffect(() => {
@@ -55,8 +80,54 @@ function App() {
     localStorage.setItem('savedChords', JSON.stringify(savedItems));
   }, [savedItems]);
 
+  const availableChips = useMemo(() => {
+    const searchStr = searchTerm.toLowerCase();
+    const normalizedSearch = searchStr
+      .replace(/db/g, 'c#')
+      .replace(/eb/g, 'd#')
+      .replace(/gb/g, 'f#')
+      .replace(/ab/g, 'g#')
+      .replace(/bb/g, 'a#');
+
+    const baseFiltered = currentChords.filter(chord => {
+      const matchSearch = searchTerm === '' || 
+        `${chord.root} ${chord.quality}`.toLowerCase().includes(normalizedSearch);
+      
+      let matchScale = true;
+      if (activeKey !== 'Any Key') {
+        const root = activeKey.split(' ')[0];
+        matchScale = isChordInScale(chord.root, chord.quality, root, activeScaleType);
+      }
+      return matchSearch && matchScale;
+    });
+
+    const chips = new Set<string>(['All']);
+    const hasEssential = baseFiltered.some(chord => 
+      ESSENTIAL_CHORDS.includes(`${chord.root} ${chord.quality}`)
+    );
+    if (hasEssential) chips.add('Essential');
+
+    baseFiltered.forEach(chord => {
+      if (chord.quality === 'Power (5)') chips.add('Power');
+      else if (chord.quality === '7' || chord.quality === 'm7' || chord.quality === 'Major 7') chips.add('7th');
+      else if (chord.quality === '6') chips.add('Extended');
+      else if (chord.quality === 'Suspended') chips.add('Sus');
+      else if (chord.quality === 'Diminished') chips.add('Dim');
+      else if (chord.quality === 'Augmented') chips.add('Aug');
+      else if (chord.quality === 'Major') chips.add('Major');
+      else if (chord.quality === 'Minor') chips.add('Minor');
+    });
+    return chips;
+  }, [currentChords, searchTerm, activeKey, activeScaleType]);
+
+  useEffect(() => {
+    if (!availableChips.has(activeChip)) {
+      setActiveChip('All');
+    }
+  }, [availableChips, activeChip]);
+
   const filteredChords = useMemo(() => {
-    return CHORDS.filter(chord => {
+    return currentChords.filter(chord => {
       const searchStr = searchTerm.toLowerCase();
       const normalizedSearch = searchStr
         .replace(/db/g, 'c#')
@@ -73,30 +144,38 @@ function App() {
         const chordName = `${chord.root} ${chord.quality}`;
         matchChip = ESSENTIAL_CHORDS.includes(chordName);
       } else if (activeChip !== 'All') {
-        if (activeChip === '5') matchChip = chord.quality === 'Power (5)';
-        else if (activeChip === '7') matchChip = chord.quality === '7';
-        else if (activeChip === 'm7') matchChip = chord.quality === 'm7';
-        else if (activeChip === 'maj7') matchChip = chord.quality === 'Major 7';
-        else matchChip = chord.quality.toLowerCase() === activeChip.toLowerCase();
+        if (activeChip === 'Power') matchChip = chord.quality === 'Power (5)';
+        else if (activeChip === '7th') matchChip = ['7', 'm7', 'Major 7'].includes(chord.quality);
+        else if (activeChip === 'Extended') matchChip = chord.quality === '6';
+        else if (activeChip === 'Sus') matchChip = chord.quality === 'Suspended';
+        else if (activeChip === 'Dim') matchChip = chord.quality === 'Diminished';
+        else if (activeChip === 'Aug') matchChip = chord.quality === 'Augmented';
+        else matchChip = chord.quality === activeChip;
       }
 
-      return matchSearch && matchChip;
+      let matchScale = true;
+      if (activeKey !== 'Any Key') {
+        const root = activeKey.split(' ')[0]; // extracts C# from "C# / Db"
+        matchScale = isChordInScale(chord.root, chord.quality, root, activeScaleType);
+      }
+
+      return matchSearch && matchChip && matchScale;
     });
-  }, [searchTerm, activeChip]);
+  }, [searchTerm, activeChip, currentChords, activeKey, activeScaleType]);
 
   const toggleSave = (chordId: string, variationId: string) => {
     setSavedItems(prev => {
-      const exists = prev.find(item => item.chordId === chordId && item.variationId === variationId);
+      const exists = prev.find(item => item.chordId === chordId && item.variationId === variationId && (item.tuning === activeTuning || (!item.tuning && activeTuning === 'GDG')));
       if (exists) {
-        return prev.filter(item => !(item.chordId === chordId && item.variationId === variationId));
+        return prev.filter(item => !(item.chordId === chordId && item.variationId === variationId && (item.tuning === activeTuning || (!item.tuning && activeTuning === 'GDG'))));
       } else {
-        return [...prev, { chordId, variationId }];
+        return [...prev, { chordId, variationId, tuning: activeTuning }];
       }
     });
   };
 
   const isSaved = (chordId: string, variationId: string) => {
-    return savedItems.some(item => item.chordId === chordId && item.variationId === variationId);
+    return savedItems.some(item => item.chordId === chordId && item.variationId === variationId && (item.tuning === activeTuning || (!item.tuning && activeTuning === 'GDG')));
   };
 
 
@@ -119,7 +198,7 @@ function App() {
     const chordsList = viewMode === 'library' 
       ? filteredChords
       : Array.from(new Set(savedItems.map(item => item.chordId)))
-          .map(id => CHORDS.find(c => c.id === id)!)
+          .map(id => currentChords.find(c => c.id === id)!)
           .filter(c => c !== undefined);
 
     chordsList.forEach(chord => {
@@ -236,12 +315,111 @@ function App() {
           </button>
         </Navbar>
 
+        {/* Legend and Tuning Selector */}
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '1rem',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1.5rem',
+        }}>
+          {/* Settings Group */}
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            {/* Tuning Selector */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.75rem',
+              backgroundColor: 'var(--surface-color)',
+              padding: '0.75rem 1.2rem',
+              borderRadius: 'var(--radius)',
+              border: '1px solid var(--border-color)',
+            }}>
+              <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Tuning:</span>
+              <CustomDropdown 
+                value={activeTuning}
+                onChange={(val) => setActiveTuning(val as Tuning)}
+                options={[
+                  { value: 'GDG', label: 'G-D-G' },
+                  { value: 'DAD', label: 'D-A-D' }
+                ]}
+              />
+            </div>
+            
+            {/* Key Selector */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.75rem',
+              backgroundColor: 'var(--surface-color)',
+              padding: '0.75rem 1.2rem',
+              borderRadius: 'var(--radius)',
+              border: '1px solid var(--border-color)',
+            }}>
+              <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Key:</span>
+              <CustomDropdown 
+                value={activeKey}
+                onChange={(val) => {
+                  if (activeKey === 'Any Key' && val !== 'Any Key') {
+                    setActiveScaleType('Major');
+                  }
+                  setActiveKey(val);
+                }}
+                options={KEY_OPTIONS}
+              />
+            </div>
+
+            {/* Scale Selector */}
+            {activeKey !== 'Any Key' && (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.75rem',
+                backgroundColor: 'var(--surface-color)',
+                padding: '0.75rem 1.2rem',
+                borderRadius: 'var(--radius)',
+                border: '1px solid var(--border-color)',
+                animation: 'fadeIn 0.2s ease-out'
+              }}>
+                <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Scale:</span>
+                <CustomDropdown 
+                  value={activeScaleType}
+                  onChange={(val) => setActiveScaleType(val as ScaleType)}
+                  options={SCALE_TYPES.map(type => ({ value: type, label: type }))}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Finger Guide */}
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            fontSize: '0.85rem',
+            color: 'var(--text-muted)',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            backgroundColor: 'var(--surface-color)',
+            padding: '0.75rem 1.2rem',
+            borderRadius: 'var(--radius)',
+            border: '1px solid var(--border-color)',
+          }}>
+            <span style={{ fontWeight: 'bold' }}>Finger Guide:</span>
+            <span><span style={legendDotStyle}>1</span> Index</span>
+            <span><span style={legendDotStyle}>2</span> Middle</span>
+            <span><span style={legendDotStyle}>3</span> Ring</span>
+            <span><span style={legendDotStyle}>4</span> Pinky</span>
+          </div>
+        </div>
+
         {viewMode === 'library' ? (
           <FilterBar
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             activeChip={activeChip}
             onChipChange={setActiveChip}
+            availableChips={availableChips}
           />
         ) : (
           <div style={{ 
@@ -265,26 +443,7 @@ function App() {
           </div>
         )}
 
-        {/* Finger Legend */}
-        <div style={{
-          display: 'flex',
-          gap: '1rem',
-          fontSize: '0.85rem',
-          color: 'var(--text-muted)',
-          marginBottom: '1.5rem',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          backgroundColor: 'var(--surface-color)',
-          padding: '0.75rem 1rem',
-          borderRadius: 'var(--radius)',
-          border: '1px solid var(--border-color)'
-        }}>
-          <span style={{ fontWeight: 'bold' }}>Finger Guide:</span>
-          <span><span style={legendDotStyle}>1</span> Index</span>
-          <span><span style={legendDotStyle}>2</span> Middle</span>
-          <span><span style={legendDotStyle}>3</span> Ring</span>
-          <span><span style={legendDotStyle}>4</span> Pinky</span>
-        </div>
+
 
         {viewMode === 'library' && Object.keys(groupedChords).length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
@@ -390,8 +549,8 @@ function App() {
         )}
       </dialog>
 
-      <Tuner isOpen={isTunerOpen} onClose={() => setIsTunerOpen(false)} />
-      <FretboardMap isOpen={isFretboardOpen} onClose={() => setIsFretboardOpen(false)} />
+      <Tuner isOpen={isTunerOpen} onClose={() => setIsTunerOpen(false)} tuning={activeTuning} />
+      <FretboardMap isOpen={isFretboardOpen} onClose={() => setIsFretboardOpen(false)} tuning={activeTuning} />
     </>
   );
 }

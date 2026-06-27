@@ -1,21 +1,31 @@
 import React, { useRef, useEffect } from 'react';
 
+import type { Tuning } from '../data/chords';
+
 interface FretboardMapProps {
   isOpen: boolean;
   onClose: () => void;
+  tuning: Tuning;
 }
 
-const STRINGS = [
-  { name: 'High G', rootNoteIndex: 7, thickness: 1 }, // index 7 is G
-  { name: 'Middle D', rootNoteIndex: 2, thickness: 2 }, // index 2 is D
-  { name: 'Low G', rootNoteIndex: 7, thickness: 3 }, // index 7 is G
-];
+const TUNINGS = {
+  'GDG': [
+    { name: 'G4', rootNoteIndex: 7, thickness: 1 }, // index 7 is G
+    { name: 'D4', rootNoteIndex: 2, thickness: 2 }, // index 2 is D
+    { name: 'G3', rootNoteIndex: 7, thickness: 3 }, // index 7 is G
+  ],
+  'DAD': [
+    { name: 'D4', rootNoteIndex: 2, thickness: 1 }, // index 2 is D
+    { name: 'A3', rootNoteIndex: 9, thickness: 2 }, // index 9 is A
+    { name: 'D3', rootNoteIndex: 2, thickness: 3 }, // index 2 is D
+  ]
+};
 
 const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-const FRETS = 12;
-const FRET_MARKERS = [3, 5, 7, 9];
+const FRETS = 19;
+const FRET_MARKERS = [3, 5, 7, 9, 15, 17];
 
-export const FretboardMap: React.FC<FretboardMapProps> = ({ isOpen, onClose }) => {
+export const FretboardMap: React.FC<FretboardMapProps> = ({ isOpen, onClose, tuning }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -75,7 +85,7 @@ export const FretboardMap: React.FC<FretboardMapProps> = ({ isOpen, onClose }) =
         </div>
 
         <p className="tuning-info">
-          Standard Open G Tuning (G-D-G). All notes up to the 12th fret.
+          {tuning === 'GDG' ? 'Standard Open G Tuning (G-D-G).' : 'Open D Tuning (D-A-D).'} All notes up to the 19th fret.
         </p>
 
         <div className="fretboard-wrapper">
@@ -99,7 +109,7 @@ export const FretboardMap: React.FC<FretboardMapProps> = ({ isOpen, onClose }) =
                 )}
 
                 {/* Strings and Notes */}
-                {STRINGS.map((string, stringIndex) => {
+                {TUNINGS[tuning].map((string, stringIndex) => {
                   const topPosition = `${(stringIndex * 33.33) + 16.66}%`;
                   
                   return (

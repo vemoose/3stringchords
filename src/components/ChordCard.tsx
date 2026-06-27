@@ -82,10 +82,18 @@ export const ChordCard: React.FC<ChordCardProps> = ({ chord, isSaved, onToggleSa
         e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
       }
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, fontSize: '1.25rem' }}>
-          {chord.root}{ENHARMONIC_MAP[chord.root] ? ` / ${ENHARMONIC_MAP[chord.root]}` : ''}{chord.suffix} <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>({chord.root}{ENHARMONIC_MAP[chord.root] ? ` / ${ENHARMONIC_MAP[chord.root]}` : ''} {chord.quality})</span>
-        </h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          <h3 style={{ margin: 0, fontSize: '1.25rem' }}>
+            {chord.root}{ENHARMONIC_MAP[chord.root] ? ` / ${ENHARMONIC_MAP[chord.root]}` : ''} {chord.quality}
+          </h3>
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+            Frets: {[3, 2, 1].map(strNum => {
+              const pos = currentVariation.positions.find(p => p.string === strNum);
+              return pos ? pos.fret : 'x';
+            }).join(' · ')}
+          </div>
+        </div>
         <button 
           onClick={handleSaveClick}
           className={isAnimating ? 'icon-pop-active' : ''}
