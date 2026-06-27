@@ -455,28 +455,47 @@ function App() {
           </div>
         ) : viewMode === 'library' ? (
           <div>
-            {FAMILY_ORDER.filter(family => groupedChords[family]?.length > 0).map(family => (
-              <div key={family} className="family-section">
-                <h3 className="family-section-header">{family}</h3>
-                <div className="chord-grid chord-grid-responsive">
-                  {groupedChords[family].map((chord, idx) => {
-                    const isExpanded = expandedChordInfo?.chord.id === chord.id;
-                    
-                    return (
-                      <ChordCard
-                        key={`${chord.id}-${idx}`}
-                        chord={chord}
-                        initialVariationId={undefined}
-                        isSaved={(varId) => isSaved(chord.id, varId)}
-                        onToggleSave={toggleSave}
-                        onExpand={handleExpand}
-                        isExpanded={isExpanded}
-                      />
-                    );
-                  })}
-                </div>
+            {activeKey !== 'Any Key' ? (
+              <div className="chord-grid chord-grid-responsive">
+                {filteredChords.map((chord, idx) => {
+                  const isExpanded = expandedChordInfo?.chord.id === chord.id;
+                  return (
+                    <ChordCard
+                      key={`${chord.id}-${idx}`}
+                      chord={chord}
+                      initialVariationId={undefined}
+                      isSaved={(varId) => isSaved(chord.id, varId)}
+                      onToggleSave={toggleSave}
+                      onExpand={handleExpand}
+                      isExpanded={isExpanded}
+                    />
+                  );
+                })}
               </div>
-            ))}
+            ) : (
+              FAMILY_ORDER.filter(family => groupedChords[family]?.length > 0).map(family => (
+                <div key={family} className="family-section">
+                  <h3 className="family-section-header">{family}</h3>
+                  <div className="chord-grid chord-grid-responsive">
+                    {groupedChords[family].map((chord, idx) => {
+                      const isExpanded = expandedChordInfo?.chord.id === chord.id;
+                      
+                      return (
+                        <ChordCard
+                          key={`${chord.id}-${idx}`}
+                          chord={chord}
+                          initialVariationId={undefined}
+                          isSaved={(varId) => isSaved(chord.id, varId)}
+                          onToggleSave={toggleSave}
+                          onExpand={handleExpand}
+                          isExpanded={isExpanded}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         ) : (
           <div className="chord-grid chord-grid-responsive">
