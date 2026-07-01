@@ -2,18 +2,16 @@
 
 :root {
   /* Premium Color Palette */
-  --brand-accent-light: #6366f1; /* Indigo */
-  --brand-accent-dark: #818cf8;
+  --brand-accent-light: #059669; /* Emerald 600 */
+  --brand-accent-dark: #10b981; /* Emerald 500 */
   --accent-color: var(--brand-accent-light);
   
-  --brand-gradient: linear-gradient(135deg, #4f46e5, #ec4899);
-
-  --bg-color-light: #fbfbfc;
-  --bg-color-dark: #090a0f;
+  --bg-color-light: #f8fafc;
+  --bg-color-dark: #0f172a;
   --bg-color: var(--bg-color-light);
 
-  --surface-color-light: rgba(255, 255, 255, 0.7);
-  --surface-color-dark: rgba(18, 20, 28, 0.7);
+  --surface-color-light: #ffffff;
+  --surface-color-dark: #1e293b;
   --surface-color: var(--surface-color-light);
 
   --text-main-light: #0f172a;
@@ -24,16 +22,16 @@
   --text-muted-dark: #94a3b8;
   --text-muted: var(--text-muted-light);
 
-  --border-color-light: rgba(226, 232, 240, 0.6);
-  --border-color-dark: rgba(30, 41, 59, 0.6);
+  --border-color-light: #e2e8f0;
+  --border-color-dark: #334155;
   --border-color: var(--border-color-light);
 
   --shadow-sm-light: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-sm-dark: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm-dark: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
   --shadow-sm: var(--shadow-sm-light);
 
   --shadow-lg-light: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg-dark: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(99, 102, 241, 0.1);
+  --shadow-lg-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
   --shadow-lg: var(--shadow-lg-light);
 
   /* Fallback for browsers without light-dark support */
@@ -110,15 +108,13 @@ button {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 0.95rem;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  transition: all 0.2s ease-in-out;
 }
 
 button:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
-  background-color: light-dark(rgba(255,255,255,0.9), rgba(30,35,45,0.9));
+  background-color: light-dark(#f1f5f9, #334155);
 }
 
 button:active {
@@ -126,23 +122,20 @@ button:active {
 }
 
 button.primary {
-  background: var(--brand-gradient);
+  background: var(--accent-color);
   color: #ffffff;
   border: none;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+  box-shadow: var(--shadow-sm);
 }
 
 button.primary:hover {
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
-  filter: brightness(1.1);
-  transform: translateY(-2px);
+  background-color: light-dark(#047857, #059669); /* Darker emerald on hover */
+  transform: translateY(-1px);
 }
 
-/* Glassmorphism utility */
+/* Base structural utility */
 .glass {
   background-color: var(--surface-color);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
 }
@@ -155,8 +148,6 @@ button.primary:hover {
   padding-top: 1rem;
   padding-bottom: 1rem;
   background: var(--surface-color);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-color);
   margin-left: -1.5rem;
   margin-right: -1.5rem;
@@ -279,10 +270,9 @@ dialog.expanded-chord-modal::backdrop {
 }
 
 .filter-chip.active {
-  background-color: var(--brand-accent-light);
+  background-color: var(--accent-color);
   color: #fff;
-  border-color: var(--brand-accent-light);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+  border-color: var(--accent-color);
 }
 
 /* Family Section Headers */
@@ -407,16 +397,15 @@ dialog.expanded-chord-modal::backdrop {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--brand-gradient);
+  background: var(--accent-color);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.85rem;
-  font-weight: 800;
+  font-weight: 700;
   z-index: 2;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(0,0,0,0.1);
   transition: transform 0.2s;
   cursor: default;
 }

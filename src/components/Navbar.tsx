@@ -54,9 +54,9 @@ export const Navbar: React.FC<NavbarProps> = ({ children }) => {
       marginTop: '1rem'
     }}>
       <div className="navbar-brand">
-        <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 800, background: 'var(--brand-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: '1' }}>
-          3-String Chords
-        </h1>
+        <a href="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img src="/logo.png" alt="3-String Chords Logo" style={{ height: '54px', objectFit: 'contain' }} />
+        </a>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <a href="https://ko-fi.com/vemoose" target="_blank" rel="noopener noreferrer" style={{
             fontSize: '0.75rem',
