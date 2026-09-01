@@ -68,27 +68,27 @@ export const ChordCard: React.FC<ChordCardProps> = ({ chord, isSaved, onToggleSa
 
   return (
     <div 
-      className={`chord-card glass animate-in ${isExpanded ? 'vt-expanded-card' : ''}`} 
+      className={`chord-card ${isExpanded ? 'chord-card--expanded' : 'glass animate-in'} ${isExpanded ? 'vt-expanded-card' : ''}`} 
       onClick={handleCardClick}
       style={{ 
-      padding: '1.5rem', 
+      padding: isExpanded ? '0.5rem' : '1.5rem', 
       borderRadius: 'var(--radius)', 
       display: 'flex', 
       flexDirection: 'column',
       gap: '1rem',
       position: 'relative',
-      backgroundColor: isExpanded ? 'var(--bg-color)' : undefined,
+      backgroundColor: isExpanded ? 'transparent' : undefined,
       cursor: onExpand ? 'pointer' : 'default',
-      transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease'
+      transition: isExpanded ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease'
     }}
     onMouseEnter={(e) => {
-      if (onExpand) {
+      if (onExpand && !isExpanded) {
         e.currentTarget.style.transform = 'translateY(-4px)';
         e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
       }
     }}
     onMouseLeave={(e) => {
-      if (onExpand) {
+      if (onExpand && !isExpanded) {
         e.currentTarget.style.transform = 'translateY(0)';
         e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
       }

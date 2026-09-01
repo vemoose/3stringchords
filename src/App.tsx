@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { Navbar } from './components/Navbar';
 import { FilterBar } from './components/FilterBar';
 import { ChordCard } from './components/ChordCard';
+import { Modal } from './components/Modal';
+import { PracticeList, matchesTuning, reorderSavedItems } from './components/PracticeList';
 import { Tuner } from './components/Tuner';
 import { FretboardMap } from './components/FretboardMap';
 import { CustomDropdown } from './components/CustomDropdown';
@@ -180,7 +182,26 @@ function App() {
     return savedItems.some(item => item.chordId === chordId && item.variationId === variationId && (item.tuning === activeTuning || (!item.tuning && activeTuning === 'GDG')));
   };
 
+  const practiceEntries = useMemo(() => {
+    let displayIndex = 0;
+    return savedItems.flatMap((item, globalIndex) => {
+      if (!matchesTuning(item, activeTuning)) return [];
+      const chord = currentChords.find(c => c.id === item.chordId);
+      if (!chord) return [];
+      const entry = {
+        id: `practice-${globalIndex}`,
+        item,
+        chord,
+        displayIndex,
+      };
+      displayIndex++;
+      return [entry];
+    });
+  }, [savedItems, activeTuning, currentChords]);
 
+  const handleReorder = (fromIndex: number, toIndex: number) => {
+    setSavedItems(prev => reorderSavedItems(prev, activeTuning, fromIndex, toIndex));
+  };
 
   const legendDotStyle = {
     display: 'inline-block',
@@ -318,7 +339,7 @@ function App() {
         </Navbar>
 
         {/* Legend and Tuning Selector */}
-        <div style={{
+        <div className="settings-bar" style={{
           display: 'flex',
           flexWrap: 'wrap',
           gap: '1rem',
@@ -327,9 +348,9 @@ function App() {
           marginBottom: '1.5rem',
         }}>
           {/* Settings Group */}
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <div className="settings-group" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             {/* Tuning Selector */}
-            <div style={{ 
+            <div className="settings-control" style={{ 
               display: 'flex', 
               alignItems: 'center', 
               gap: '0.75rem',
@@ -353,7 +374,7 @@ function App() {
             </div>
             
             {/* Key Selector */}
-            <div style={{ 
+            <div className="settings-control" style={{ 
               display: 'flex', 
               alignItems: 'center', 
               gap: '0.75rem',
@@ -377,7 +398,7 @@ function App() {
 
             {/* Scale Selector */}
             {activeKey !== 'Any Key' && (
-              <div style={{ 
+              <div className="settings-control" style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '0.75rem',
@@ -398,7 +419,7 @@ function App() {
           </div>
 
           {/* Finger Guide */}
-          <div style={{
+          <div className="finger-guide" style={{
             display: 'flex',
             gap: '1rem',
             fontSize: '0.85rem',
@@ -454,7 +475,7 @@ function App() {
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
             <p>No chords found.</p>
           </div>
-        ) : viewMode === 'practice' && Object.values(groupedChords).flat().length === 0 ? (
+        ) : viewMode === 'practice' && practiceEntries.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
             <p>No chords saved for practice yet. Go back to the library and save some!</p>
           </div>
@@ -503,24 +524,14 @@ function App() {
             )}
           </div>
         ) : (
-          <div className="chord-grid chord-grid-responsive">
-            {Object.values(groupedChords).flat().map((chord, idx) => {
-              const initialVar = savedItems.find(item => item.chordId === chord.id)?.variationId;
-              const isExpanded = expandedChordInfo?.chord.id === chord.id;
-              
-              return (
-                <ChordCard
-                  key={`${chord.id}-${idx}`}
-                  chord={chord}
-                  initialVariationId={initialVar}
-                  isSaved={(varId) => isSaved(chord.id, varId)}
-                  onToggleSave={toggleSave}
-                  onExpand={handleExpand}
-                  isExpanded={isExpanded}
-                />
-              );
-            })}
-          </div>
+          <PracticeList
+            entries={practiceEntries}
+            onReorder={handleReorder}
+            isSaved={isSaved}
+            onToggleSave={toggleSave}
+            onExpand={handleExpand}
+            expandedChordId={expandedChordInfo?.chord.id ?? null}
+          />
         )}
       </div>
 
@@ -551,27 +562,17 @@ function App() {
         </p>
       </footer>
 
-      <dialog 
-        ref={dialogRef} 
-        className="expanded-chord-modal"
-        onClick={(e) => {
-          if (e.target === dialogRef.current) {
-            handleCloseModal();
-          }
-        }}
-      >
+      <Modal dialogRef={dialogRef} onClose={handleCloseModal} panelClassName="modal-panel--chord">
         {expandedChordInfo && (
-          <div style={{ transform: 'scale(1.6)', transformOrigin: 'center' }}>
-            <ChordCard
-              chord={expandedChordInfo.chord}
-              initialVariationId={expandedChordInfo.variationId}
-              isSaved={(varId) => isSaved(expandedChordInfo.chord.id, varId)}
-              onToggleSave={toggleSave}
-              isExpanded={true}
-            />
-          </div>
+          <ChordCard
+            chord={expandedChordInfo.chord}
+            initialVariationId={expandedChordInfo.variationId}
+            isSaved={(varId) => isSaved(expandedChordInfo.chord.id, varId)}
+            onToggleSave={toggleSave}
+            isExpanded={true}
+          />
         )}
-      </dialog>
+      </Modal>
 
       <Tuner isOpen={isTunerOpen} onClose={() => setIsTunerOpen(false)} tuning={activeTuning} />
       <FretboardMap isOpen={isFretboardOpen} onClose={() => setIsFretboardOpen(false)} tuning={activeTuning} />

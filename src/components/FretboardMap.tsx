@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
 import type { Tuning } from '../data/chords';
+import { Modal } from './Modal';
 
 interface FretboardMapProps {
   isOpen: boolean;
@@ -58,48 +59,11 @@ export const FretboardMap: React.FC<FretboardMapProps> = ({ isOpen, onClose, tun
   };
 
   return (
-    <dialog 
-      ref={dialogRef}
-      className="expanded-chord-modal"
-      onClick={(e) => {
-        if (e.target === dialogRef.current) {
-          onClose();
-        }
-      }}
-    >
-      <div 
-        className="glass" 
-        style={{ 
-          padding: '2rem', 
-          borderRadius: 'var(--radius)', 
-          width: '95vw', 
-          maxWidth: '1000px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.5rem',
-          backgroundColor: 'var(--bg-color)',
-          boxShadow: 'var(--shadow-lg)',
-          position: 'relative'
-        }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>Fretboard Map</h2>
-          <button 
-            onClick={onClose}
-            style={{ 
-              background: 'none', 
-              border: 'none', 
-              color: 'var(--text-muted)', 
-              cursor: 'pointer',
-              padding: '0.5rem'
-            }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-          </button>
-        </div>
+    <Modal dialogRef={dialogRef} onClose={onClose} panelClassName="modal-panel--wide">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>Fretboard Map</h2>
 
-        <p className="tuning-info" style={{ color: 'var(--text-muted)' }}>
+        <p className="tuning-info" style={{ color: 'var(--text-muted)', margin: 0 }}>
           {tuning === 'GDG' && 'Standard Open G Tuning (G-D-G).'}
           {tuning === 'DAD' && 'Open D Tuning (D-A-D).'}
           {tuning === 'EBE' && 'Open E Tuning (E-B-E).'}
@@ -168,6 +132,6 @@ export const FretboardMap: React.FC<FretboardMapProps> = ({ isOpen, onClose, tun
           </div>
         </div>
       </div>
-    </dialog>
+    </Modal>
   );
 };

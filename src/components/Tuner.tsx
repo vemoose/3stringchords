@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Tuning } from '../data/chords';
+import { Modal } from './Modal';
 
 interface TunerProps {
   isOpen: boolean;
@@ -201,31 +202,8 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose, tuning }) => {
   };
 
   return (
-    <dialog 
-      ref={dialogRef}
-      className="expanded-chord-modal"
-      onClick={(e) => {
-        if (e.target === dialogRef.current) {
-          onClose();
-        }
-      }}
-    >
-      <div 
-        className="glass" 
-        style={{ 
-          padding: '2rem', 
-          borderRadius: 'var(--radius)', 
-          width: '90vw', 
-          maxWidth: '400px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1.5rem',
-          backgroundColor: 'var(--bg-color)',
-          boxShadow: 'var(--shadow-lg)'
-        }}
-        onClick={e => e.stopPropagation()}
-      >
+    <Modal dialogRef={dialogRef} onClose={onClose} panelClassName="modal-panel--compact">
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
         <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>{tuning} Tuner</h2>
         
         {micError && <p style={{ color: '#ef4444', fontSize: '0.9rem', textAlign: 'center' }}>{micError}</p>}
@@ -467,22 +445,7 @@ export const Tuner: React.FC<TunerProps> = ({ isOpen, onClose, tuning }) => {
           )}
         </div>
         <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>Press and hold to play</p>
-
-        <button 
-          onClick={onClose}
-          style={{
-            marginTop: '1rem',
-            background: 'transparent',
-            border: '1px solid var(--border-color)',
-            color: 'var(--text-main)',
-            padding: '0.5rem 2rem',
-            borderRadius: '9999px',
-            cursor: 'pointer'
-          }}
-        >
-          Close
-        </button>
       </div>
-    </dialog>
+    </Modal>
   );
 };

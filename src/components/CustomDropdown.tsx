@@ -18,7 +18,7 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({ options, value, 
   const selectedOption = options.find(opt => opt.value === value) || options[0];
 
   useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
@@ -26,9 +26,11 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({ options, value, 
 
     if (isOpen) {
       document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('touchstart', handleOutsideClick);
     }
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
     };
   }, [isOpen]);
 
