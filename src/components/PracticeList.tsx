@@ -84,19 +84,6 @@ interface PracticeListProps {
   expandedChordId: string | null;
 }
 
-function DragHandleIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <circle cx="9" cy="6" r="1.5" />
-      <circle cx="15" cy="6" r="1.5" />
-      <circle cx="9" cy="12" r="1.5" />
-      <circle cx="15" cy="12" r="1.5" />
-      <circle cx="9" cy="18" r="1.5" />
-      <circle cx="15" cy="18" r="1.5" />
-    </svg>
-  );
-}
-
 function ChevronUpIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -157,9 +144,18 @@ function SortablePracticeItem({
       className={`practice-list-item${isDragging ? ' practice-list-item--dragging' : ''}`}
     >
       <div className="practice-list-controls" aria-label={`Position ${entry.displayIndex + 1} controls`}>
-        <span className="practice-list-number" aria-hidden="true">
-          {entry.displayIndex + 1}
-        </span>
+        <button
+          type="button"
+          ref={setActivatorNodeRef}
+          className="practice-list-drag-number"
+          aria-label={`Drag to reorder ${entry.chord.root} ${entry.chord.quality}, position ${entry.displayIndex + 1}`}
+          {...attributes}
+          {...listeners}
+        >
+          <span className="practice-list-drag-number__value" aria-hidden="true">
+            {entry.displayIndex + 1}
+          </span>
+        </button>
 
         <div className="practice-list-move-buttons">
           <button
@@ -181,17 +177,6 @@ function SortablePracticeItem({
             <ChevronDownIcon />
           </button>
         </div>
-
-        <button
-          type="button"
-          ref={setActivatorNodeRef}
-          className="practice-list-drag-handle"
-          aria-label={`Drag to reorder ${entry.chord.root} ${entry.chord.quality}`}
-          {...attributes}
-          {...listeners}
-        >
-          <DragHandleIcon />
-        </button>
       </div>
 
       <div className="practice-list-card">
@@ -254,10 +239,6 @@ export function PracticeList({
 
   return (
     <div className={`practice-list${isDesktopGrid ? ' practice-list--grid' : ''}`}>
-      <p className="practice-list-hint">
-        Drag the handle or use the arrows to set your practice order
-      </p>
-
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext
           items={sortableIds}

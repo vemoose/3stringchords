@@ -307,21 +307,14 @@ function App() {
             availableChips={availableChips}
           />
         ) : (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'flex-end', 
-            marginBottom: '1rem' 
-          }}>
-            <button 
+          <div className="practice-toolbar">
+            <p className="practice-toolbar__hint">
+              Drag the number or use the arrows to set your practice order
+            </p>
+            <button
+              type="button"
+              className="practice-toolbar__clear-btn"
               onClick={() => setSavedItems([])}
-              style={{
-                background: 'transparent',
-                border: '1px solid var(--border-color)',
-                color: 'var(--text-main)',
-                padding: '0.5rem 1rem',
-                borderRadius: 'var(--radius)',
-                cursor: 'pointer'
-              }}
             >
               Clear All Saved
             </button>
