@@ -4,6 +4,7 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
+import { scoreCbgVoicing, compareCbgVoicings } from './cbgScoring';
 
 const chordsPath = path.resolve('./src/data/chords.ts');
 let content = fs.readFileSync(chordsPath, 'utf-8');
@@ -59,7 +60,6 @@ function classifyVoicing(
     if (hasRoot && hasMaj3 && !has5) {
       return { voicingType: 'no5', badge: 'Easy', helperText: 'No 5th. Easier version.' };
     }
-    // Power shape: root + 5th, no 3rd of any kind
     if (hasRoot && !hasMaj3 && !hasMin3 && has5) {
       return {
         voicingType: 'power',
@@ -98,6 +98,7 @@ function classifyVoicing(
 function generateVariations(
   rootStr: string,
   quality: (typeof TARGET_QUALITIES)[number],
+  tuningName: string,
   tuningIntervals: number[]
 ) {
   const R = SCALE_NOTES.indexOf(rootStr);
@@ -159,47 +160,21 @@ function generateVariations(
 
     const isFlippable = vStr !== flippedStr && uniqueMathMap.has(flippedStr);
 
-    let primaryFrets = v.frets;
+    let primaryFrets = v.frets as [number, number, number];
     if (isFlippable && v.frets[0] > v.frets[2]) {
-      primaryFrets = flippedFrets;
+      primaryFrets = flippedFrets as [number, number, number];
     }
 
-    const pressed = primaryFrets.filter((f: number) => f > 0);
+    const { score, isEssential, badge } = scoreCbgVoicing({
+      frets: primaryFrets,
+      quality,
+      voicingType: v.voicingType,
+      tuningName,
+      rootIndex: R,
+    });
+
+    const pressed = primaryFrets.filter((f) => f > 0);
     const startFret = pressed.length > 0 ? Math.max(1, Math.min(...pressed)) : 1;
-    const maxFret = pressed.length > 0 ? Math.max(...pressed) : 0;
-    const openCount = 3 - pressed.length;
-    const span = pressed.length > 0 ? maxFret - Math.min(...pressed) : 0;
-
-    let score = 100;
-    if (v.voicingType === 'full') score += 50;
-    if (v.voicingType === 'power') score += 15;
-    if (v.voicingType === 'no5') score += 10;
-    if (v.voicingType === 'rootless' || v.voicingType === 'sparse7') score -= 50;
-    if (span === 0 && pressed.length === 3) score += 10;
-    if (openCount === 3) score += 60;
-    else if (openCount === 2) score += 20;
-    else if (openCount === 1) score += 10;
-    score -= span;
-
-    if (
-      (quality === '7' || quality === 'm7') &&
-      primaryFrets[0] === primaryFrets[1] &&
-      primaryFrets[2] === primaryFrets[0] + 3
-    ) {
-      score += 50;
-    }
-
-    const highFretPenaltyMult = span === 0 ? 0.5 : 1;
-    if (startFret > 5) score -= (startFret - 5) * 5 * highFretPenaltyMult;
-    if (startFret > 7) score -= 20 * highFretPenaltyMult;
-    if (maxFret > 9) score -= 30 * highFretPenaltyMult;
-
-    let finalBadge = v.badge;
-    if (startFret > 7 && score < 100) {
-      finalBadge = 'High Position';
-    } else if (openCount === 0 && v.badge === 'Standard') {
-      finalBadge = 'Movable';
-    }
 
     const newVar: Record<string, unknown> = {
       id: `math_${primaryFrets.join('_')}`,
@@ -210,8 +185,8 @@ function generateVariations(
         { string: 1, fret: primaryFrets[2], finger: 1 },
       ],
       voicingType: v.voicingType,
-      badge: finalBadge,
-      isEssential: score >= 110,
+      badge: badge ?? v.badge,
+      isEssential,
       helperText: v.helperText,
       score,
     };
@@ -225,8 +200,51 @@ function generateVariations(
     seen.add(flippedStr);
   }
 
-  processedVariations.sort((a, b) => (b.score as number) - (a.score as number));
+  processedVariations.sort((a, b) =>
+    compareCbgVoicings(
+      { frets: [a.positions[0].fret, a.positions[1].fret, a.positions[2].fret], score: a.score as number },
+      { frets: [b.positions[0].fret, b.positions[1].fret, b.positions[2].fret], score: b.score as number }
+    )
+  );
   return processedVariations.slice(0, 20).map(({ score: _, ...rest }) => rest);
+}
+
+function resortPowerVariations(
+  variations: any[],
+  rootStr: string,
+  tuningName: string
+): any[] {
+  const R = SCALE_NOTES.indexOf(rootStr);
+  const scored = variations.map((v) => {
+    const frets = [3, 2, 1].map(
+      (s) => v.positions.find((p: { string: number }) => p.string === s)?.fret ?? 0
+    ) as [number, number, number];
+    const { score, isEssential } = scoreCbgVoicing({
+      frets,
+      quality: 'Power (5)',
+      voicingType: 'power',
+      tuningName,
+      rootIndex: R,
+    });
+    return { ...v, score, isEssential };
+  });
+  scored.sort((a, b) =>
+    compareCbgVoicings(
+      {
+        frets: [3, 2, 1].map(
+          (s) => a.positions.find((p: { string: number }) => p.string === s)?.fret ?? 0
+        ) as [number, number, number],
+        score: a.score,
+      },
+      {
+        frets: [3, 2, 1].map(
+          (s) => b.positions.find((p: { string: number }) => p.string === s)?.fret ?? 0
+        ) as [number, number, number],
+        score: b.score,
+      }
+    )
+  );
+  return scored.map(({ score: _, ...rest }) => rest);
 }
 
 const QUALITY_ORDER = [
@@ -252,15 +270,23 @@ for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
   }
 
   const currentChords = new Function(`return ${match[1]}`)();
-  const preserved = currentChords.filter(
-    (c: { quality: string }) => !TARGET_QUALITIES.includes(c.quality as (typeof TARGET_QUALITIES)[number])
-  );
+  const preserved = currentChords
+    .filter(
+      (c: { quality: string }) =>
+        !TARGET_QUALITIES.includes(c.quality as (typeof TARGET_QUALITIES)[number])
+    )
+    .map((c: { quality: string; root: string; variations: any[] }) => {
+      if (c.quality === 'Power (5)') {
+        return { ...c, variations: resortPowerVariations(c.variations, c.root, tuningName) };
+      }
+      return c;
+    });
 
   const regenerated: unknown[] = [];
 
   for (const quality of TARGET_QUALITIES) {
     for (const root of SCALE_NOTES) {
-      const variations = generateVariations(root, quality, tuningIntervals);
+      const variations = generateVariations(root, quality, tuningName, tuningIntervals);
       regenerated.push({
         id: makeId(root, quality),
         root,
@@ -280,7 +306,7 @@ for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
 
   const newTuningString = JSON.stringify(merged, null, 2).replace(/"([^"]+)":/g, '$1:');
   content = content.replace(match[1], newTuningString);
-  console.log(`Regenerated ${tuningName}: ${regenerated.length} chord types updated`);
+  console.log(`Regenerated ${tuningName}`);
 }
 
 fs.writeFileSync(chordsPath, content, 'utf-8');

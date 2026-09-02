@@ -1,10 +1,9 @@
 /**
- * Generates sus2, sus4, Diminished, and Augmented chords using the same
- * mathematical enumeration + scoring pipeline as generate_math_injection_v2.ts.
- * Reads and writes src/data/chords.ts in place.
+ * Generates sus2, sus4, Diminished, and Augmented chords using CBG-focused scoring.
  */
 import * as fs from 'fs';
 import * as path from 'path';
+import { scoreCbgVoicing, compareCbgVoicings } from './cbgScoring';
 
 const chordsPath = path.resolve('./src/data/chords.ts');
 let content = fs.readFileSync(chordsPath, 'utf-8');
@@ -53,6 +52,7 @@ function makeId(root: string, quality: (typeof TARGET_QUALITIES)[number]) {
 function generateVariations(
   rootStr: string,
   quality: (typeof TARGET_QUALITIES)[number],
+  tuningName: string,
   tuningIntervals: number[]
 ) {
   const R = SCALE_NOTES.indexOf(rootStr);
@@ -98,50 +98,23 @@ function generateVariations(
 
     const isFlippable = vStr !== flippedStr && uniqueMathMap.has(flippedStr);
 
-    let primaryFrets = v.frets;
+    let primaryFrets = v.frets as [number, number, number];
     if (isFlippable && v.frets[0] > v.frets[2]) {
-      primaryFrets = flippedFrets;
+      primaryFrets = flippedFrets as [number, number, number];
     }
 
-    const pressed = primaryFrets.filter((f: number) => f > 0);
+    const { score, isEssential, badge } = scoreCbgVoicing({
+      frets: primaryFrets,
+      quality,
+      voicingType: 'full',
+      tuningName,
+      rootIndex: R,
+    });
+
+    const pressed = primaryFrets.filter((f) => f > 0);
     const startFret = pressed.length > 0 ? Math.max(1, Math.min(...pressed)) : 1;
-    const maxFret = pressed.length > 0 ? Math.max(...pressed) : 0;
-    const openCount = 3 - pressed.length;
-    const span = pressed.length > 0 ? maxFret - Math.min(...pressed) : 0;
 
-    let score = 100;
-    if (v.voicingType === 'full') score += 50;
-    if (span === 0 && pressed.length === 3) score += 10;
-    if (openCount === 3) score += 60;
-    else if (openCount === 2) score += 20;
-    else if (openCount === 1) score += 10;
-    score -= span;
-
-    // Classic one-finger barre sus shapes (low strings matched, interval on high string)
-    if (
-      (quality === 'sus4' &&
-        primaryFrets[0] === primaryFrets[1] &&
-        primaryFrets[2] === primaryFrets[0] + 5) ||
-      (quality === 'sus2' &&
-        primaryFrets[0] === primaryFrets[1] &&
-        primaryFrets[2] === primaryFrets[0] + 2)
-    ) {
-      score += 40;
-    }
-
-    const highFretPenaltyMult = span === 0 ? 0.5 : 1;
-    if (startFret > 5) score -= (startFret - 5) * 5 * highFretPenaltyMult;
-    if (startFret > 7) score -= 20 * highFretPenaltyMult;
-    if (maxFret > 9) score -= 30 * highFretPenaltyMult;
-
-    let finalBadge = v.badge;
-    if (startFret > 7 && score < 100) {
-      finalBadge = 'High Position';
-    } else if (openCount === 0 && v.badge === 'Standard') {
-      finalBadge = 'Movable';
-    }
-
-    const newVar = {
+    const newVar: Record<string, unknown> = {
       id: `math_${primaryFrets.join('_')}`,
       startingFret: startFret,
       positions: [
@@ -149,9 +122,9 @@ function generateVariations(
         { string: 2, fret: primaryFrets[1], finger: 1 },
         { string: 1, fret: primaryFrets[2], finger: 1 },
       ],
-      voicingType: v.voicingType,
-      badge: finalBadge,
-      isEssential: score >= 110,
+      voicingType: 'full',
+      badge: badge ?? 'Standard',
+      isEssential,
       score,
     };
 
@@ -164,9 +137,26 @@ function generateVariations(
     seen.add(flippedStr);
   }
 
-  processedVariations.sort((a, b) => b.score - a.score);
+  processedVariations.sort((a, b) =>
+    compareCbgVoicings(
+      { frets: [a.positions[0].fret, a.positions[1].fret, a.positions[2].fret], score: a.score as number },
+      { frets: [b.positions[0].fret, b.positions[1].fret, b.positions[2].fret], score: b.score as number }
+    )
+  );
   return processedVariations.slice(0, 20).map(({ score: _, ...rest }) => rest);
 }
+
+const QUALITY_ORDER = [
+  'Power (5)',
+  'Major',
+  'Minor',
+  '7',
+  'm7',
+  'sus2',
+  'sus4',
+  'Diminished',
+  'Augmented',
+];
 
 for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
   const matchRegex = new RegExp(
@@ -180,7 +170,6 @@ for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
 
   const tuningChords = new Function(`return ${match[1]}`)();
 
-  // Remove legacy manual Suspended chords and any existing target-quality entries
   const preserved = tuningChords.filter(
     (c: { quality: string }) =>
       !TARGET_QUALITIES.includes(c.quality as (typeof TARGET_QUALITIES)[number]) &&
@@ -189,7 +178,7 @@ for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
 
   for (const quality of TARGET_QUALITIES) {
     for (const root of SCALE_NOTES) {
-      const variations = generateVariations(root, quality, tuningIntervals);
+      const variations = generateVariations(root, quality, tuningName, tuningIntervals);
       if (variations.length === 0) {
         console.warn(`No voicings for ${root} ${quality} in ${tuningName}`);
         continue;
@@ -204,29 +193,15 @@ for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
     }
   }
 
-  // Sort: group by root then quality order
-  const qualityOrder = [
-    'Power (5)',
-    'Major',
-    'Minor',
-    '7',
-    'm7',
-    'sus2',
-    'sus4',
-    'Diminished',
-    'Augmented',
-  ];
   preserved.sort((a: { root: string; quality: string }, b: { root: string; quality: string }) => {
     const rootDiff = SCALE_NOTES.indexOf(a.root) - SCALE_NOTES.indexOf(b.root);
     if (rootDiff !== 0) return rootDiff;
-    return qualityOrder.indexOf(a.quality) - qualityOrder.indexOf(b.quality);
+    return QUALITY_ORDER.indexOf(a.quality) - QUALITY_ORDER.indexOf(b.quality);
   });
 
   const newTuningString = JSON.stringify(preserved, null, 2).replace(/"([^"]+)":/g, '$1:');
   content = content.replace(match[1], newTuningString);
-  console.log(
-    `${tuningName}: ${preserved.length} chords (${TARGET_QUALITIES.length * 12} triad types + preserved)`
-  );
+  console.log(`Regenerated triads for ${tuningName}`);
 }
 
 fs.writeFileSync(chordsPath, content, 'utf-8');
