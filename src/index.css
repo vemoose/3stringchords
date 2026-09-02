@@ -499,77 +499,171 @@ dialog.expanded-chord-modal::backdrop {
   color: var(--text-main);
 }
 
+/* Fretboard modal */
+.fretboard-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.fretboard-modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.fretboard-desktop {
+  display: block;
+}
+
+.fretboard-mobile {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Mobile fretboard grid */
+.fretboard-mobile-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: min(62dvh, 560px);
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: linear-gradient(180deg, #1e1e1e 0%, #151515 100%);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+  overscroll-behavior: contain;
+}
+
+.fretboard-grid {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.fretboard-grid-row {
+  display: grid;
+  grid-template-columns: 3.25rem repeat(3, minmax(0, 1fr));
+  align-items: center;
+  min-height: 46px;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.fretboard-grid-row:last-child {
+  border-bottom: none;
+}
+
+.fretboard-grid-row--marker {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fretboard-grid-row--marker-12 {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.fretboard-grid-label {
+  padding: 0 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.fretboard-grid-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.25rem;
+}
+
+.fretboard-grid-note {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--accent-color);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
-  .fretboard-wrapper {
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-bottom: 2rem;
-    padding-top: 1rem;
-    padding-right: 0;
+  dialog.app-modal:has(.fretboard-modal) {
+    overflow: hidden;
   }
 
-  .fretboard {
+  .modal-shell:has(.fretboard-modal) {
+    display: flex;
     flex-direction: column;
-    min-width: 0;
-    width: 100%;
-    height: 65vh;
-    min-height: 400px;
-    background: linear-gradient(90deg, #1e1e1e 0%, #151515 100%);
-  }
-  
-  .fret-col {
-    border-right: none;
-    border-bottom: 2px solid #444;
-    flex-direction: row;
-  }
-  
-  .fret-col.nut {
-    border-right: none;
-    border-bottom: 6px solid #e5e5e5;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-bottom-left-radius: 0;
-  }
-  
-  .string-line {
-    top: 0;
-    bottom: 0;
-    left: calc(100% - var(--pos));
-    width: var(--thick);
-    height: auto;
-    background: linear-gradient(90deg, #999 0%, #666 100%);
-  }
-  
-  .note-circle {
-    left: calc(100% - var(--pos));
-    top: 50%;
-    width: 24px;
-    height: 24px;
-    font-size: 0.7rem;
-  }
-  
-  .note-circle.open {
-    left: calc(100% - var(--pos));
-    top: -15px; /* Offset above the nut */
+    overflow: hidden;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: 100%;
+    max-height: 100%;
   }
 
-  .fret-number {
-    bottom: auto;
-    top: 50%;
-    right: 25px; /* changed from -25px so it's inside the fretboard */
-    width: auto;
-    transform: translateY(-50%);
+  .fretboard-desktop {
+    display: none;
   }
 
-  .fret-number.open-label {
-    top: 25px;
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
+  .fretboard-mobile {
+    display: flex;
+    flex-direction: column;
   }
-  
-  .fret-marker.double-1 { top: 50%; left: 25%; }
-  .fret-marker.double-2 { top: 50%; left: 75%; }
+
+  .modal-panel.fretboard-modal {
+    padding: 1rem;
+    padding-top: 3rem;
+    max-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .fretboard-modal-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .fretboard-modal-title,
+  .tuning-info {
+    flex-shrink: 0;
+  }
+
+  .fretboard-mobile-scroll {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    height: 100%;
+  }
+
+  .fretboard-grid-row {
+    min-height: 42px;
+  }
+
+  .fretboard-grid-note {
+    min-width: 2rem;
+    height: 2rem;
+    font-size: 0.75rem;
+  }
+
+  .tuning-info {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
 }
 
 .dropdown-option:hover {
