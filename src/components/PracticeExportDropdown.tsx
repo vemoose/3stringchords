@@ -2,21 +2,31 @@ import { useEffect, useRef, useState } from 'react';
 
 interface PracticeExportDropdownProps {
   disabled?: boolean;
-  isSaving?: boolean;
-  isPreparingPrint?: boolean;
+  isExporting?: boolean;
+  onExport: () => void;
   onPrint: () => void;
   onSaveImage: () => void;
 }
 
 export function PracticeExportDropdown({
   disabled = false,
-  isSaving = false,
-  isPreparingPrint = false,
+  isExporting = false,
+  onExport,
   onPrint,
   onSaveImage,
 }: PracticeExportDropdownProps) {
   const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches,
+  );
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 768px)');
+    const handleChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
+    media.addEventListener('change', handleChange);
+    return () => media.removeEventListener('change', handleChange);
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
@@ -42,10 +52,23 @@ export function PracticeExportDropdown({
   };
 
   const handleSaveImage = () => {
-    if (isSaving) return;
+    if (isExporting) return;
     setOpen(false);
     onSaveImage();
   };
+
+  if (isMobile) {
+    return (
+      <button
+        type="button"
+        className="practice-toolbar__print-btn"
+        onClick={onExport}
+        disabled={disabled || isExporting}
+      >
+        {isExporting ? 'Preparing…' : 'Export'}
+      </button>
+    );
+  }
 
   return (
     <div className="practice-export-dropdown" ref={ref}>
@@ -81,18 +104,18 @@ export function PracticeExportDropdown({
             role="menuitem"
             className="practice-export-dropdown__option"
             onClick={handlePrint}
-            disabled={isPreparingPrint}
+            disabled={isExporting}
           >
-            {isPreparingPrint ? 'Preparing…' : 'Print'}
+            Print
           </button>
           <button
             type="button"
             role="menuitem"
             className="practice-export-dropdown__option"
             onClick={handleSaveImage}
-            disabled={isSaving}
+            disabled={isExporting}
           >
-            {isSaving ? 'Saving…' : 'Save image'}
+            {isExporting ? 'Saving…' : 'Save image'}
           </button>
         </div>
       )}

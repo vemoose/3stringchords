@@ -2,7 +2,9 @@ import { useState, type RefObject } from 'react';
 import { Modal } from './Modal';
 import {
   canSharePracticeSnapshot,
+  isMobileExportDevice,
   printPracticeSnapshotImage,
+  printPracticeSnapshotOnMobile,
   sharePracticeSnapshotFile,
 } from '../utils/capturePracticeSnapshot';
 
@@ -44,13 +46,22 @@ export function PracticeSnapshotModal({
 
     setIsPrinting(true);
     try {
-      await printPracticeSnapshotImage(dataUrl);
+      if (isMobileExportDevice()) {
+        await printPracticeSnapshotOnMobile(dataUrl, filename);
+      } else {
+        await printPracticeSnapshotImage(dataUrl);
+      }
     } catch (error) {
       console.error('Failed to print practice snapshot', error);
     } finally {
       setIsPrinting(false);
     }
   };
+
+  const hintText =
+    initialAction === 'print'
+      ? 'Tap Print to open the share menu, then choose Print. You can also press and hold the image to save it.'
+      : 'Press and hold the image to save it to Photos, or use the buttons below.';
 
   if (!dataUrl) return null;
 
@@ -64,7 +75,7 @@ export function PracticeSnapshotModal({
       <div className="practice-snapshot-modal__content">
         <h2 className="practice-snapshot-modal__title">Practice Set</h2>
         <p className="practice-snapshot-modal__hint">
-          Press and hold the image to save it to Photos, or use the buttons below.
+          {hintText}
         </p>
 
         <div className="practice-snapshot-modal__image-wrap">

@@ -112,7 +112,68 @@ export function downloadPracticeSnapshot(dataUrl: string, filename: string): voi
   link.click();
 }
 
+function printPracticeSnapshotViaOverlay(dataUrl: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'practice-print-overlay';
+    overlay.innerHTML = `<img src="${dataUrl}" alt="Practice Set" />`;
+    document.body.appendChild(overlay);
+
+    let settled = false;
+    const cleanup = () => {
+      if (settled) return;
+      settled = true;
+      window.removeEventListener('afterprint', cleanup);
+      overlay.remove();
+      resolve();
+    };
+
+    window.addEventListener('afterprint', cleanup);
+
+    requestAnimationFrame(() => {
+      try {
+        window.print();
+      } catch (error) {
+        settled = true;
+        window.removeEventListener('afterprint', cleanup);
+        overlay.remove();
+        reject(error);
+      }
+    });
+
+    window.setTimeout(cleanup, 60_000);
+  });
+}
+
+/** Mobile print via share sheet (includes Print on iOS) with overlay fallback. */
+export async function printPracticeSnapshotOnMobile(
+  dataUrl: string,
+  filename: string,
+): Promise<void> {
+  if (canSharePracticeSnapshot()) {
+    try {
+      const file = await dataUrlToFile(dataUrl, filename);
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Practice Set',
+        });
+        return;
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      console.error('Failed to share practice sheet for printing', error);
+    }
+  }
+
+  await printPracticeSnapshotViaOverlay(dataUrl);
+}
+
 export function printPracticeSnapshotImage(dataUrl: string): Promise<void> {
+  if (isMobileExportDevice()) {
+    return printPracticeSnapshotViaOverlay(dataUrl);
+  }
+
   return new Promise((resolve, reject) => {
     const iframe = document.createElement('iframe');
     iframe.setAttribute('aria-hidden', 'true');

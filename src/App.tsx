@@ -16,10 +16,10 @@ import type { Chord, Tuning } from './data/chords';
 import {
   disablePracticeExportMode,
   downloadPracticeSnapshot,
-  isMobileExportDevice,
   practiceSnapshotFilename,
   printPracticeSheet,
   renderPracticeSnapshotPng,
+  sharePracticeSnapshotFile,
 } from './utils/capturePracticeSnapshot';
 
 const ESSENTIAL_CHORDS = [
@@ -119,8 +119,7 @@ function App() {
   const snapshotDialogRef = useRef<HTMLDialogElement>(null);
   const practicePrintRef = useRef<HTMLDivElement>(null);
   const savedItemsHydrated = useRef(false);
-  const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
-  const [isPreparingPrint, setIsPreparingPrint] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [snapshotPreview, setSnapshotPreview] = useState<{
     dataUrl: string;
     action: 'save' | 'print';
@@ -318,23 +317,30 @@ function App() {
     });
   };
 
-  const handlePrintPractice = async () => {
+  const handleExportPractice = async () => {
     const el = practicePrintRef.current;
     if (!el || practiceEntries.length === 0) return;
 
-    if (isMobileExportDevice()) {
-      setIsPreparingPrint(true);
-      try {
-        const dataUrl = await renderPracticeSnapshotPng(el);
-        setSnapshotPreview({ dataUrl, action: 'print' });
+    setIsExporting(true);
+    try {
+      const filename = practiceSnapshotFilename(activeTuning);
+      const dataUrl = await renderPracticeSnapshotPng(el);
+      const shared = await sharePracticeSnapshotFile(dataUrl, filename);
+      if (!shared) {
+        setSnapshotPreview({ dataUrl, action: 'save' });
         setTimeout(() => snapshotDialogRef.current?.showModal(), 0);
-      } catch (error) {
-        console.error('Failed to prepare practice print', error);
-      } finally {
-        setIsPreparingPrint(false);
       }
-      return;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      console.error('Failed to export practice sheet', error);
+    } finally {
+      setIsExporting(false);
     }
+  };
+
+  const handlePrintPractice = async () => {
+    const el = practicePrintRef.current;
+    if (!el || practiceEntries.length === 0) return;
 
     try {
       await printPracticeSheet(el);
@@ -347,21 +353,15 @@ function App() {
     const el = practicePrintRef.current;
     if (!el || practiceEntries.length === 0) return;
 
-    setIsSavingSnapshot(true);
+    setIsExporting(true);
     try {
       const filename = practiceSnapshotFilename(activeTuning);
       const dataUrl = await renderPracticeSnapshotPng(el);
-
-      if (isMobileExportDevice()) {
-        setSnapshotPreview({ dataUrl, action: 'save' });
-        setTimeout(() => snapshotDialogRef.current?.showModal(), 0);
-      } else {
-        downloadPracticeSnapshot(dataUrl, filename);
-      }
+      downloadPracticeSnapshot(dataUrl, filename);
     } catch (error) {
       console.error('Failed to save practice snapshot', error);
     } finally {
-      setIsSavingSnapshot(false);
+      setIsExporting(false);
     }
   };
 
@@ -403,8 +403,8 @@ function App() {
             <div className="practice-toolbar__actions">
               <PracticeExportDropdown
                 disabled={practiceEntries.length === 0}
-                isSaving={isSavingSnapshot}
-                isPreparingPrint={isPreparingPrint}
+                isExporting={isExporting}
+                onExport={handleExportPractice}
                 onPrint={handlePrintPractice}
                 onSaveImage={handleSavePracticeSnapshot}
               />

@@ -1598,6 +1598,10 @@ dialog.expanded-chord-modal::backdrop {
   cursor: not-allowed;
 }
 
+.practice-print-overlay {
+  display: none;
+}
+
 .practice-print-header {
   display: none;
 }
@@ -2018,8 +2022,26 @@ dialog.expanded-chord-modal::backdrop {
   }
 
   #practice-print-area,
-  #practice-print-area * {
+  #practice-print-area *,
+  .practice-print-overlay,
+  .practice-print-overlay * {
     visibility: visible;
+  }
+
+  .practice-print-overlay {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .practice-print-overlay img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
   .container {
