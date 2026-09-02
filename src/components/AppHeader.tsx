@@ -119,6 +119,87 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     onKeyChange(val);
   };
 
+  const themeMenuItem = (
+    <button
+      type="button"
+      className="filters-menu__action filters-menu__action--theme"
+      onClick={() => {
+        toggleTheme();
+        setFiltersOpen(false);
+      }}
+    >
+      {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+    </button>
+  );
+
+  const mobileMoreMenu = (
+    <div className="filters-menu-wrapper" ref={filtersRef}>
+      <button
+        type="button"
+        className="custom-dropdown__trigger"
+        onClick={() => setFiltersOpen((prev) => !prev)}
+        aria-expanded={filtersOpen}
+      >
+        More
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`custom-dropdown__chevron ${filtersOpen ? 'custom-dropdown__chevron--open' : ''}`}
+          aria-hidden="true"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      {filtersOpen && (
+        <div className="filters-menu">
+          {viewMode === 'library' && activeKey !== 'Any Key' && (
+            <div className="filters-menu__row">
+              <span className="filters-menu__label">Scale</span>
+              <CustomDropdown
+                variant="compact"
+                value={activeScaleType}
+                onChange={(val) => onScaleTypeChange(val as ScaleType)}
+                options={SCALE_TYPES.map((type) => ({ value: type, label: type }))}
+              />
+            </div>
+          )}
+          {viewMode === 'library' && (
+            <>
+              <button
+                type="button"
+                className="filters-menu__action"
+                onClick={() => {
+                  onOpenFretboard();
+                  setFiltersOpen(false);
+                }}
+              >
+                Fretboard
+                <span className="filters-menu__hint">{TUNING_DISPLAY[activeTuning]}</span>
+              </button>
+              <button
+                type="button"
+                className="filters-menu__action"
+                onClick={() => {
+                  onOpenTuner();
+                  setFiltersOpen(false);
+                }}
+              >
+                Tuner
+              </button>
+            </>
+          )}
+          {themeMenuItem}
+        </div>
+      )}
+    </div>
+  );
+
   const themeToggleBtn = (
     <button
       type="button"
@@ -135,48 +216,99 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     </button>
   );
 
+  const viewTabs = (
+    <div className="view-tabs" role="tablist" aria-label="View mode">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={viewMode === 'library'}
+        className={`view-tab ${viewMode === 'library' ? 'view-tab--active' : ''}`}
+        onClick={() => onViewModeChange('library')}
+      >
+        Library
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={viewMode === 'practice'}
+        className={`view-tab ${viewMode === 'practice' ? 'view-tab--active' : ''}`}
+        onClick={() => onViewModeChange('practice')}
+      >
+        Practice
+        {savedCount > 0 && (
+          <span className="view-tab__badge" aria-label={`${savedCount} saved chords`}>
+            {savedCount}
+          </span>
+        )}
+      </button>
+    </div>
+  );
+
+  const libraryControls = (
+    <>
+      <CustomDropdown
+        value={activeTuning}
+        onChange={(val) => onTuningChange(val as Tuning)}
+        options={TUNING_OPTIONS}
+      />
+      <CustomDropdown
+        value={activeKey}
+        onChange={handleKeyChange}
+        options={KEY_OPTIONS}
+      />
+      {activeKey !== 'Any Key' && (
+        <CustomDropdown
+          value={activeScaleType}
+          onChange={(val) => onScaleTypeChange(val as ScaleType)}
+          options={SCALE_TYPES.map((type) => ({ value: type, label: type }))}
+        />
+      )}
+      <button type="button" className="header-tool-btn" onClick={onOpenFretboard}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="3" x2="18" y2="21"></line><line x1="14" y1="3" x2="14" y2="21"></line><line x1="10" y1="3" x2="10" y2="21"></line><line x1="6" y1="3" x2="6" y2="21"></line><line x1="2" y1="6" x2="22" y2="6"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="18" x2="22" y2="18"></line></svg>
+        Fretboard
+        <span className="header-tool-btn__hint">{TUNING_DISPLAY[activeTuning]}</span>
+      </button>
+      <button type="button" className="header-tool-btn" onClick={onOpenTuner}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+        Tuner
+      </button>
+    </>
+  );
+
   return (
     <div className={`app-header-group${viewMode === 'practice' ? ' app-header-group--practice' : ''}`}>
-      <header className="app-header">
-        <a href="/" className="app-header__logo">
-          <img src="/logo.png" alt="3-String Chords Logo" />
-        </a>
+      <header className="app-header app-header--mobile mobile-only">
+        {viewTabs}
+        {viewMode === 'practice' && mobileMoreMenu}
+      </header>
 
-        <div className="view-tabs" role="tablist" aria-label="View mode">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={viewMode === 'library'}
-            className={`view-tab ${viewMode === 'library' ? 'view-tab--active' : ''}`}
-            onClick={() => onViewModeChange('library')}
-          >
-            Library
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={viewMode === 'practice'}
-            className={`view-tab ${viewMode === 'practice' ? 'view-tab--active' : ''}`}
-            onClick={() => onViewModeChange('practice')}
-          >
-            Practice
-            {savedCount > 0 && (
-              <span className="view-tab__badge" aria-label={`${savedCount} saved chords`}>
-                {savedCount}
-              </span>
-            )}
-          </button>
-        </div>
+      <header className="app-header app-header--desktop desktop-only">
+        {viewTabs}
 
-        <div className="app-header__theme">
-          {themeToggleBtn}
+        {viewMode === 'library' && (
+          <>
+            <div className="header-divider" aria-hidden="true" />
+            <div className="header-settings-group">
+              {libraryControls}
+            </div>
+          </>
+        )}
+
+        <div className="app-header__trailing">
+          <div className="header-divider" aria-hidden="true" />
+          <div className="app-header__theme">
+            {themeToggleBtn}
+          </div>
         </div>
       </header>
 
       {viewMode === 'library' && (
-        <div className="app-header-settings">
-          {/* Mobile: compact filter row */}
-          <div className="mobile-filter-row mobile-only">
+        <div className="app-header-settings mobile-only">
+          <div className="mobile-filter-row">
             <CustomDropdown
               variant="compact"
               value={activeTuning}
@@ -189,107 +321,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
               onChange={handleKeyChange}
               options={KEY_OPTIONS}
             />
-            <div className="filters-menu-wrapper" ref={filtersRef}>
-              <button
-                type="button"
-                className="filters-btn"
-                onClick={() => setFiltersOpen((prev) => !prev)}
-                aria-expanded={filtersOpen}
-              >
-                More
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`filters-btn__chevron ${filtersOpen ? 'filters-btn__chevron--open' : ''}`}
-                  aria-hidden="true"
-                >
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-              {filtersOpen && (
-                <div className="filters-menu">
-                  {activeKey !== 'Any Key' && (
-                    <div className="filters-menu__row">
-                      <span className="filters-menu__label">Scale</span>
-                      <CustomDropdown
-                        variant="compact"
-                        value={activeScaleType}
-                        onChange={(val) => onScaleTypeChange(val as ScaleType)}
-                        options={SCALE_TYPES.map((type) => ({ value: type, label: type }))}
-                      />
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    className="filters-menu__action"
-                    onClick={() => {
-                      onOpenFretboard();
-                      setFiltersOpen(false);
-                    }}
-                  >
-                    Fretboard
-                    <span className="filters-menu__hint">{TUNING_DISPLAY[activeTuning]}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="filters-menu__action"
-                    onClick={() => {
-                      onOpenTuner();
-                      setFiltersOpen(false);
-                    }}
-                  >
-                    Tuner
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Desktop: full settings row */}
-          <div className="header-settings desktop-only">
-            <div className="header-settings-group">
-              <CustomDropdown
-                value={activeTuning}
-                onChange={(val) => onTuningChange(val as Tuning)}
-                options={TUNING_OPTIONS}
-              />
-              <CustomDropdown
-                value={activeKey}
-                onChange={handleKeyChange}
-                options={KEY_OPTIONS}
-              />
-              {activeKey !== 'Any Key' && (
-                <CustomDropdown
-                  value={activeScaleType}
-                  onChange={(val) => onScaleTypeChange(val as ScaleType)}
-                  options={SCALE_TYPES.map((type) => ({ value: type, label: type }))}
-                />
-              )}
-            </div>
-
-            <div className="header-divider" aria-hidden="true" />
-
-            <div className="header-tools">
-              <button type="button" className="header-tool-btn" onClick={onOpenFretboard}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="3" x2="18" y2="21"></line><line x1="14" y1="3" x2="14" y2="21"></line><line x1="10" y1="3" x2="10" y2="21"></line><line x1="6" y1="3" x2="6" y2="21"></line><line x1="2" y1="6" x2="22" y2="6"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="18" x2="22" y2="18"></line></svg>
-                Fretboard
-                <span className="header-tool-btn__hint">{TUNING_DISPLAY[activeTuning]}</span>
-              </button>
-              <button type="button" className="header-tool-btn" onClick={onOpenTuner}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 18V5l12-2v13"></path>
-                  <circle cx="6" cy="18" r="3"></circle>
-                  <circle cx="18" cy="16" r="3"></circle>
-                </svg>
-                Tuner
-              </button>
-            </div>
+            {mobileMoreMenu}
           </div>
         </div>
       )}
