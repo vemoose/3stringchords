@@ -4,7 +4,7 @@ import { FilterBar } from './components/FilterBar';
 import { FingerGuideTip } from './components/FingerGuideTip';
 import { ChordCard } from './components/ChordCard';
 import { Modal } from './components/Modal';
-import { PracticeList, matchesTuning, reorderSavedItems, type SavedItem } from './components/PracticeList';
+import { PracticeList, getPracticeSavedItems, practiceItemId, reorderSavedItems, type SavedItem } from './components/PracticeList';
 import { Tuner } from './components/Tuner';
 import { FretboardMap } from './components/FretboardMap';
 import { isChordInScale } from './data/scales';
@@ -35,19 +35,62 @@ const QUALITY_TO_FAMILY: Record<string, string> = {
   'Augmented': 'Augmented',
 };
 
+const SAVED_CHORDS_STORAGE_KEY = 'savedChords';
+const SAVED_CHORDS_VERSION_KEY = 'savedChordsVersion';
+/** Bump to reset saved practice lists when storage format or chord data changes. */
+const SAVED_CHORDS_VERSION = '2';
+
+const CHORDS_BY_TUNING: Record<Tuning, Chord[]> = {
+  GDG: GDG_CHORDS,
+  DAD: DAD_CHORDS,
+  EBE: EBE_CHORDS,
+  AEA: AEA_CHORDS,
+  CGC: CGC_CHORDS,
+};
+
+function sanitizeSavedItems(items: SavedItem[]): SavedItem[] {
+  return items.filter((item) => {
+    const tuning = (item.tuning ?? 'GDG') as Tuning;
+    const chords = CHORDS_BY_TUNING[tuning];
+    if (!chords) return false;
+
+    const chord = chords.find((c) => c.id === item.chordId);
+    if (!chord) return false;
+
+    return chord.variations.some((variation) => variation.id === item.variationId);
+  });
+}
+
+function loadSavedItems(): SavedItem[] {
+  try {
+    const storedVersion = localStorage.getItem(SAVED_CHORDS_VERSION_KEY);
+    if (storedVersion !== SAVED_CHORDS_VERSION) {
+      localStorage.removeItem(SAVED_CHORDS_STORAGE_KEY);
+      localStorage.setItem(SAVED_CHORDS_VERSION_KEY, SAVED_CHORDS_VERSION);
+      return [];
+    }
+
+    const saved = localStorage.getItem(SAVED_CHORDS_STORAGE_KEY);
+    if (!saved) return [];
+
+    const parsed = JSON.parse(saved) as SavedItem[];
+    const sanitized = sanitizeSavedItems(parsed);
+    if (sanitized.length !== parsed.length) {
+      localStorage.setItem(SAVED_CHORDS_STORAGE_KEY, JSON.stringify(sanitized));
+    }
+    return sanitized;
+  } catch {
+    console.error('Failed to parse saved chords');
+    localStorage.removeItem(SAVED_CHORDS_STORAGE_KEY);
+    return [];
+  }
+}
+
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeChip, setActiveChip] = useState('All');
   const [viewMode, setViewMode] = useState<ViewMode>('library');
-  const [savedItems, setSavedItems] = useState<SavedItem[]>(() => {
-    try {
-      const saved = localStorage.getItem('savedChords');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      console.error('Failed to parse saved chords');
-      return [];
-    }
-  });
+  const [savedItems, setSavedItems] = useState<SavedItem[]>(loadSavedItems);
   const [expandedChordInfo, setExpandedChordInfo] = useState<{ chord: Chord, variationId: string } | null>(null);
   const [isTunerOpen, setIsTunerOpen] = useState(false);
   const [isFretboardOpen, setIsFretboardOpen] = useState(false);
@@ -64,7 +107,8 @@ function App() {
       savedItemsHydrated.current = true;
       return;
     }
-    localStorage.setItem('savedChords', JSON.stringify(savedItems));
+    localStorage.setItem(SAVED_CHORDS_STORAGE_KEY, JSON.stringify(savedItems));
+    localStorage.setItem(SAVED_CHORDS_VERSION_KEY, SAVED_CHORDS_VERSION);
   }, [savedItems]);
 
   const availableChips = useMemo(() => {
@@ -168,24 +212,22 @@ function App() {
   };
 
   const practiceEntries = useMemo(() => {
-    let displayIndex = 0;
-    return savedItems.flatMap((item, globalIndex) => {
-      if (!matchesTuning(item, activeTuning)) return [];
-      const chord = currentChords.find(c => c.id === item.chordId);
-      if (!chord) return [];
-      const entry = {
-        id: `practice-${globalIndex}`,
+    return getPracticeSavedItems(savedItems, activeTuning, currentChords).map(
+      ({ item }, displayIndex) => ({
+        id: practiceItemId(item),
         item,
-        chord,
+        chord: currentChords.find((c) => c.id === item.chordId)!,
         displayIndex,
-      };
-      displayIndex++;
-      return [entry];
-    });
+      }),
+    );
   }, [savedItems, activeTuning, currentChords]);
 
+  const practiceCount = practiceEntries.length;
+
   const handleReorder = (fromIndex: number, toIndex: number) => {
-    setSavedItems(prev => reorderSavedItems(prev, activeTuning, fromIndex, toIndex));
+    setSavedItems((prev) =>
+      reorderSavedItems(prev, activeTuning, currentChords, fromIndex, toIndex),
+    );
   };
 
   const groupedChords = useMemo(() => {
@@ -251,7 +293,7 @@ function App() {
           onKeyChange={setActiveKey}
           activeScaleType={activeScaleType}
           onScaleTypeChange={setActiveScaleType}
-          savedCount={savedItems.length}
+          savedCount={practiceCount}
           onOpenFretboard={() => setIsFretboardOpen(true)}
           onOpenTuner={() => setIsTunerOpen(true)}
         />

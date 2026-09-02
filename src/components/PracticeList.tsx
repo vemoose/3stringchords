@@ -27,25 +27,42 @@ export function matchesTuning(item: SavedItem, tuning: Tuning): boolean {
   return item.tuning === tuning || (!item.tuning && tuning === 'GDG');
 }
 
+export function practiceItemId(item: SavedItem): string {
+  return `${item.chordId}:${item.variationId}:${item.tuning ?? 'GDG'}`;
+}
+
+/** Saved items that appear in the practice list for the active tuning. */
+export function getPracticeSavedItems(
+  items: SavedItem[],
+  tuning: Tuning,
+  chords: Chord[],
+): { item: SavedItem; globalIndex: number }[] {
+  const result: { item: SavedItem; globalIndex: number }[] = [];
+
+  items.forEach((item, globalIndex) => {
+    if (!matchesTuning(item, tuning)) return;
+    const chord = chords.find((c) => c.id === item.chordId);
+    if (!chord) return;
+    result.push({ item, globalIndex });
+  });
+
+  return result;
+}
+
 export function reorderSavedItems(
   items: SavedItem[],
   tuning: Tuning,
+  chords: Chord[],
   fromDisplayIndex: number,
   toDisplayIndex: number,
 ): SavedItem[] {
-  const tuningIndices: number[] = [];
-  const tuningItems: SavedItem[] = [];
+  const practiceItems = getPracticeSavedItems(items, tuning, chords);
+  const globalIndices = practiceItems.map((entry) => entry.globalIndex);
+  const practiceData = practiceItems.map((entry) => entry.item);
 
-  items.forEach((item, i) => {
-    if (matchesTuning(item, tuning)) {
-      tuningIndices.push(i);
-      tuningItems.push(item);
-    }
-  });
-
-  const reordered = arrayMove(tuningItems, fromDisplayIndex, toDisplayIndex);
+  const reordered = arrayMove(practiceData, fromDisplayIndex, toDisplayIndex);
   const result = [...items];
-  tuningIndices.forEach((origIdx, i) => {
+  globalIndices.forEach((origIdx, i) => {
     result[origIdx] = reordered[i];
   });
   return result;
