@@ -12,23 +12,23 @@ export type ScaleType = typeof SCALE_TYPES[number];
 
 // Maps semitone interval from root to an array of allowed chord qualities
 const MAJOR_SCALE_CHORDS: Record<number, string[]> = {
-  0: ['Major', 'Major 7', '6', 'Suspended', 'Power (5)'], // I
-  2: ['Minor', 'm7', 'Suspended', 'Power (5)'], // ii
+  0: ['Major', 'sus2', 'sus4', 'Power (5)'], // I
+  2: ['Minor', 'm7', 'sus2', 'sus4', 'Power (5)'], // ii
   4: ['Minor', 'm7', 'Power (5)'], // iii
-  5: ['Major', 'Major 7', '6', 'Suspended', 'Power (5)'], // IV
-  7: ['Major', '7', 'Suspended', 'Power (5)'], // V
+  5: ['Major', 'sus2', 'sus4', 'Power (5)'], // IV
+  7: ['Major', '7', 'sus2', 'sus4', 'Power (5)'], // V
   9: ['Minor', 'm7', 'Power (5)'], // vi
   11: ['Diminished', 'Power (5)'] // vii°
 };
 
 const NATURAL_MINOR_SCALE_CHORDS: Record<number, string[]> = {
-  0: ['Minor', 'm7', 'Suspended', 'Power (5)'], // i
+  0: ['Minor', 'm7', 'sus2', 'sus4', 'Power (5)'], // i
   2: ['Diminished', 'Power (5)'], // ii°
-  3: ['Major', 'Major 7', '6', 'Suspended', 'Power (5)'], // III
-  5: ['Minor', 'm7', 'Suspended', 'Power (5)'], // iv
+  3: ['Major', 'sus2', 'sus4', 'Power (5)'], // III
+  5: ['Minor', 'm7', 'sus2', 'sus4', 'Power (5)'], // iv
   7: ['Minor', 'm7', 'Power (5)'], // v
-  8: ['Major', 'Major 7', '6', 'Suspended', 'Power (5)'], // VI
-  10: ['Major', '7', 'Suspended', 'Power (5)'] // VII
+  8: ['Major', 'sus2', 'sus4', 'Power (5)'], // VI
+  10: ['Major', '7', 'sus2', 'sus4', 'Power (5)'] // VII
 };
 
 const MINOR_PENTATONIC_CHORDS: Record<number, string[]> = {

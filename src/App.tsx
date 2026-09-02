@@ -31,7 +31,10 @@ const QUALITY_TO_FAMILY: Record<string, string> = {
   'Power (5)': 'Power / 5',
   '7': '7th',
   'm7': 'Minor 7',
-  'Suspended': 'Suspended',
+  'sus2': 'Suspended',
+  'sus4': 'Suspended',
+  'Diminished': 'Diminished',
+  'Augmented': 'Augmented',
 };
 
 const KEY_OPTIONS = [
@@ -114,7 +117,7 @@ function App() {
       if (chord.quality === 'Power (5)') chips.add('Power');
       else if (chord.quality === '7' || chord.quality === 'm7' || chord.quality === 'Major 7') chips.add('7th');
       else if (chord.quality === '6') chips.add('Extended');
-      else if (chord.quality === 'Suspended') chips.add('Sus');
+      else if (chord.quality === 'sus2' || chord.quality === 'sus4') chips.add('Sus');
       else if (chord.quality === 'Diminished') chips.add('Dim');
       else if (chord.quality === 'Augmented') chips.add('Aug');
       else if (chord.quality === 'Major') chips.add('Major');
@@ -151,7 +154,7 @@ function App() {
         if (activeChip === 'Power') matchChip = chord.quality === 'Power (5)';
         else if (activeChip === '7th') matchChip = ['7', 'm7', 'Major 7'].includes(chord.quality);
         else if (activeChip === 'Extended') matchChip = chord.quality === '6';
-        else if (activeChip === 'Sus') matchChip = chord.quality === 'Suspended';
+        else if (activeChip === 'Sus') matchChip = chord.quality === 'sus2' || chord.quality === 'sus4';
         else if (activeChip === 'Dim') matchChip = chord.quality === 'Diminished';
         else if (activeChip === 'Aug') matchChip = chord.quality === 'Augmented';
         else matchChip = chord.quality === activeChip;

@@ -1,6 +1,7 @@
 /**
- * Generates Major, Minor, 7, m7 chords via mathematical enumeration.
- * Reads current chords.ts and preserves Power + triad qualities (sus2/sus4/dim/aug).
+ * Generates sus2, sus4, Diminished, and Augmented chords using the same
+ * mathematical enumeration + scoring pipeline as generate_math_injection_v2.ts.
+ * Reads and writes src/data/chords.ts in place.
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -18,13 +19,20 @@ const TUNINGS: Record<string, number[]> = {
   CGC: [0, 7, 0],
 };
 
-const TARGET_QUALITIES = ['Major', 'Minor', '7', 'm7'] as const;
+const TARGET_QUALITIES = ['sus2', 'sus4', 'Diminished', 'Augmented'] as const;
 
 const QUALITY_SUFFIX: Record<(typeof TARGET_QUALITIES)[number], string> = {
-  Major: '',
-  Minor: 'm',
-  '7': '7',
-  m7: 'm7',
+  sus2: 'sus2',
+  sus4: 'sus4',
+  Diminished: 'dim',
+  Augmented: 'aug',
+};
+
+const REQUIRED_INTERVALS: Record<(typeof TARGET_QUALITIES)[number], (R: number) => number[]> = {
+  sus2: (R) => [(R + 2) % 12, (R + 7) % 12],
+  sus4: (R) => [(R + 5) % 12, (R + 7) % 12],
+  Diminished: (R) => [(R + 3) % 12, (R + 6) % 12],
+  Augmented: (R) => [(R + 4) % 12, (R + 8) % 12],
 };
 
 function getNote(stringIdx: number, fret: number, tuningIntervals: number[]) {
@@ -39,60 +47,7 @@ function isPlayable(frets: number[]) {
 }
 
 function makeId(root: string, quality: (typeof TARGET_QUALITIES)[number]) {
-  const base = root.toLowerCase().replace('#', 'sharp');
-  if (quality === 'Major') return `${base}_major`;
-  if (quality === 'Minor') return `${base}m`;
-  if (quality === '7') return `${base}_7`;
-  return `${base}_m7`;
-}
-
-function classifyVoicing(
-  quality: (typeof TARGET_QUALITIES)[number],
-  hasRoot: boolean,
-  hasMaj3: boolean,
-  hasMin3: boolean,
-  has5: boolean,
-  hasb7: boolean
-): { voicingType: string; badge: string; helperText?: string } | null {
-  if (quality === 'Major') {
-    if (hasRoot && hasMaj3 && has5) return { voicingType: 'full', badge: 'Standard' };
-    if (hasRoot && hasMaj3 && !has5) {
-      return { voicingType: 'no5', badge: 'Easy', helperText: 'No 5th. Easier version.' };
-    }
-    // Power shape: root + 5th, no 3rd of any kind
-    if (hasRoot && !hasMaj3 && !hasMin3 && has5) {
-      return {
-        voicingType: 'power',
-        badge: 'Power Shape',
-        helperText: 'Common one-finger CBG shape.',
-      };
-    }
-  } else if (quality === 'Minor') {
-    if (hasRoot && hasMin3 && has5) return { voicingType: 'full', badge: 'Standard' };
-    if (hasRoot && hasMin3 && !has5) {
-      return { voicingType: 'no5', badge: 'Easy', helperText: 'No 5th. Easier version.' };
-    }
-  } else if (quality === '7') {
-    if (hasRoot && hasMaj3 && hasb7) return { voicingType: 'full', badge: 'Standard' };
-    if (hasRoot && has5 && hasb7 && !hasMaj3 && !hasMin3) {
-      return { voicingType: 'no3', badge: 'Blues Shape', helperText: 'Works well for blues styles.' };
-    }
-    if (hasRoot && hasb7 && !has5 && !hasMaj3 && !hasMin3) {
-      return { voicingType: 'sparse7', badge: 'Blues Shape', helperText: 'Sparse 7th shape.' };
-    }
-    if (!hasRoot && hasMaj3 && has5 && hasb7) {
-      return { voicingType: 'rootless', badge: 'Advanced', helperText: 'Rootless shape.' };
-    }
-  } else if (quality === 'm7') {
-    if (hasRoot && hasMin3 && hasb7) return { voicingType: 'full', badge: 'Standard' };
-    if (hasRoot && has5 && hasb7 && !hasMin3 && !hasMaj3) {
-      return { voicingType: 'no3', badge: 'Blues Shape', helperText: 'Works well for blues styles.' };
-    }
-    if (!hasRoot && hasMin3 && has5 && hasb7) {
-      return { voicingType: 'rootless', badge: 'Advanced', helperText: 'Rootless shape.' };
-    }
-  }
-  return null;
+  return `${root.toLowerCase().replace('#', 'sharp')}${QUALITY_SUFFIX[quality]}`;
 }
 
 function generateVariations(
@@ -101,17 +56,8 @@ function generateVariations(
   tuningIntervals: number[]
 ) {
   const R = SCALE_NOTES.indexOf(rootStr);
-  const reqMaj3 = (R + 4) % 12;
-  const reqMin3 = (R + 3) % 12;
-  const req5 = (R + 7) % 12;
-  const reqb7 = (R + 10) % 12;
-
-  const mathVariations: {
-    frets: number[];
-    voicingType: string;
-    badge: string;
-    helperText?: string;
-  }[] = [];
+  const required = REQUIRED_INTERVALS[quality](R);
+  const mathVariations: { frets: number[]; voicingType: 'full'; badge: string }[] = [];
 
   for (let f3 = 0; f3 <= 15; f3++) {
     for (let f2 = 0; f2 <= 15; f2++) {
@@ -125,18 +71,11 @@ function generateVariations(
           getNote(1, f1, tuningIntervals),
         ];
 
-        const classified = classifyVoicing(
-          quality,
-          notes.includes(R),
-          notes.includes(reqMaj3),
-          notes.includes(reqMin3),
-          notes.includes(req5),
-          notes.includes(reqb7)
-        );
+        const hasRoot = notes.includes(R);
+        const hasAllRequired = required.every((n) => notes.includes(n));
+        if (!hasRoot || !hasAllRequired) continue;
 
-        if (classified) {
-          mathVariations.push({ frets, ...classified });
-        }
+        mathVariations.push({ frets, voicingType: 'full', badge: 'Standard' });
       }
     }
   }
@@ -172,21 +111,22 @@ function generateVariations(
 
     let score = 100;
     if (v.voicingType === 'full') score += 50;
-    if (v.voicingType === 'power') score += 15;
-    if (v.voicingType === 'no5') score += 10;
-    if (v.voicingType === 'rootless' || v.voicingType === 'sparse7') score -= 50;
     if (span === 0 && pressed.length === 3) score += 10;
     if (openCount === 3) score += 60;
     else if (openCount === 2) score += 20;
     else if (openCount === 1) score += 10;
     score -= span;
 
+    // Classic one-finger barre sus shapes (low strings matched, interval on high string)
     if (
-      (quality === '7' || quality === 'm7') &&
-      primaryFrets[0] === primaryFrets[1] &&
-      primaryFrets[2] === primaryFrets[0] + 3
+      (quality === 'sus4' &&
+        primaryFrets[0] === primaryFrets[1] &&
+        primaryFrets[2] === primaryFrets[0] + 5) ||
+      (quality === 'sus2' &&
+        primaryFrets[0] === primaryFrets[1] &&
+        primaryFrets[2] === primaryFrets[0] + 2)
     ) {
-      score += 50;
+      score += 40;
     }
 
     const highFretPenaltyMult = span === 0 ? 0.5 : 1;
@@ -201,7 +141,7 @@ function generateVariations(
       finalBadge = 'Movable';
     }
 
-    const newVar: Record<string, unknown> = {
+    const newVar = {
       id: `math_${primaryFrets.join('_')}`,
       startingFret: startFret,
       positions: [
@@ -212,7 +152,6 @@ function generateVariations(
       voicingType: v.voicingType,
       badge: finalBadge,
       isEssential: score >= 110,
-      helperText: v.helperText,
       score,
     };
 
@@ -225,21 +164,9 @@ function generateVariations(
     seen.add(flippedStr);
   }
 
-  processedVariations.sort((a, b) => (b.score as number) - (a.score as number));
+  processedVariations.sort((a, b) => b.score - a.score);
   return processedVariations.slice(0, 20).map(({ score: _, ...rest }) => rest);
 }
-
-const QUALITY_ORDER = [
-  'Power (5)',
-  'Major',
-  'Minor',
-  '7',
-  'm7',
-  'sus2',
-  'sus4',
-  'Diminished',
-  'Augmented',
-];
 
 for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
   const matchRegex = new RegExp(
@@ -251,17 +178,23 @@ for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
     continue;
   }
 
-  const currentChords = new Function(`return ${match[1]}`)();
-  const preserved = currentChords.filter(
-    (c: { quality: string }) => !TARGET_QUALITIES.includes(c.quality as (typeof TARGET_QUALITIES)[number])
-  );
+  const tuningChords = new Function(`return ${match[1]}`)();
 
-  const regenerated: unknown[] = [];
+  // Remove legacy manual Suspended chords and any existing target-quality entries
+  const preserved = tuningChords.filter(
+    (c: { quality: string }) =>
+      !TARGET_QUALITIES.includes(c.quality as (typeof TARGET_QUALITIES)[number]) &&
+      c.quality !== 'Suspended'
+  );
 
   for (const quality of TARGET_QUALITIES) {
     for (const root of SCALE_NOTES) {
       const variations = generateVariations(root, quality, tuningIntervals);
-      regenerated.push({
+      if (variations.length === 0) {
+        console.warn(`No voicings for ${root} ${quality} in ${tuningName}`);
+        continue;
+      }
+      preserved.push({
         id: makeId(root, quality),
         root,
         quality,
@@ -271,16 +204,29 @@ for (const [tuningName, tuningIntervals] of Object.entries(TUNINGS)) {
     }
   }
 
-  const merged = [...preserved, ...regenerated];
-  merged.sort((a: { root: string; quality: string }, b: { root: string; quality: string }) => {
+  // Sort: group by root then quality order
+  const qualityOrder = [
+    'Power (5)',
+    'Major',
+    'Minor',
+    '7',
+    'm7',
+    'sus2',
+    'sus4',
+    'Diminished',
+    'Augmented',
+  ];
+  preserved.sort((a: { root: string; quality: string }, b: { root: string; quality: string }) => {
     const rootDiff = SCALE_NOTES.indexOf(a.root) - SCALE_NOTES.indexOf(b.root);
     if (rootDiff !== 0) return rootDiff;
-    return QUALITY_ORDER.indexOf(a.quality) - QUALITY_ORDER.indexOf(b.quality);
+    return qualityOrder.indexOf(a.quality) - qualityOrder.indexOf(b.quality);
   });
 
-  const newTuningString = JSON.stringify(merged, null, 2).replace(/"([^"]+)":/g, '$1:');
+  const newTuningString = JSON.stringify(preserved, null, 2).replace(/"([^"]+)":/g, '$1:');
   content = content.replace(match[1], newTuningString);
-  console.log(`Regenerated ${tuningName}: ${regenerated.length} chord types updated`);
+  console.log(
+    `${tuningName}: ${preserved.length} chords (${TARGET_QUALITIES.length * 12} triad types + preserved)`
+  );
 }
 
 fs.writeFileSync(chordsPath, content, 'utf-8');
