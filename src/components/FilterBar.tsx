@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 export const FILTER_CHIPS = [
   { id: 'All', label: 'All' },
@@ -13,6 +13,9 @@ export const FILTER_CHIPS = [
   { id: 'Aug', label: 'Aug' },
 ];
 
+const PRIMARY_CHIP_IDS = new Set(['All', 'Essential', 'Major', 'Minor']);
+const MORE_CHIP_IDS = ['Power', '7th', 'Extended', 'Sus', 'Dim', 'Aug'];
+
 interface FilterBarProps {
   searchTerm: string;
   onSearchChange: (term: string) => void;
@@ -21,39 +24,72 @@ interface FilterBarProps {
   availableChips?: Set<string>;
 }
 
-export const FilterBar: React.FC<FilterBarProps> = ({ 
-  searchTerm, 
+export const FilterBar: React.FC<FilterBarProps> = ({
+  searchTerm,
   onSearchChange,
   activeChip,
   onChipChange,
-  availableChips
+  availableChips,
 }) => {
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  const visibleChips = FILTER_CHIPS.filter(
+    (chip) => !availableChips || availableChips.has(chip.id)
+  );
+  const primaryChips = visibleChips.filter((chip) => PRIMARY_CHIP_IDS.has(chip.id));
+  const moreChips = visibleChips.filter((chip) => MORE_CHIP_IDS.includes(chip.id));
+  const isMoreActive = MORE_CHIP_IDS.includes(activeChip);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
+      }
+    };
+
+    if (moreOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('touchstart', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [moreOpen]);
+
+  const renderChip = (chip: { id: string; label: string }) => (
+    <button
+      key={chip.id}
+      type="button"
+      onClick={() => onChipChange(chip.id)}
+      className={`filter-chip ${activeChip === chip.id ? 'active' : ''}`}
+    >
+      {chip.label}
+    </button>
+  );
+
   return (
-    <div style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div style={{ position: 'relative' }}>
+    <div className="filter-bar">
+      <div className="filter-bar__search">
         <input
           type="text"
-          placeholder="Search by root (e.g., C, F#)..."
+          placeholder="Search chords..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '0.75rem 1rem 0.75rem 2.5rem',
-            borderRadius: 'var(--radius)',
-            border: '1px solid var(--border-color)',
-            backgroundColor: 'var(--surface-color)',
-            color: 'var(--text-main)',
-            fontFamily: 'inherit',
-            fontSize: '1rem',
-            outline: 'none',
-            transition: 'border-color 0.2s',
-            boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)',
-            boxSizing: 'border-box'
-          }}
+          className="filter-bar__search-input"
         />
-        <svg 
-          width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-          style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="var(--text-muted)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="filter-bar__search-icon"
+          aria-hidden="true"
         >
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -61,18 +97,55 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       <div className="filter-chips-container">
-        {FILTER_CHIPS.map(chip => {
-          if (availableChips && !availableChips.has(chip.id)) return null;
-          return (
+        {primaryChips.map(renderChip)}
+
+        {moreChips.length > 0 && (
+          <div className="filter-more mobile-only" ref={moreRef}>
             <button
-              key={chip.id}
-              onClick={() => onChipChange(chip.id)}
-              className={`filter-chip ${activeChip === chip.id ? 'active' : ''}`}
+              type="button"
+              className={`filter-chip filter-more__trigger ${isMoreActive ? 'active' : ''}`}
+              onClick={() => setMoreOpen((prev) => !prev)}
+              aria-expanded={moreOpen}
             >
-              {chip.label}
+              More
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`filter-more__chevron ${moreOpen ? 'filter-more__chevron--open' : ''}`}
+                aria-hidden="true"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
             </button>
-          );
-        })}
+            {moreOpen && (
+              <div className="filter-more__menu">
+                {moreChips.map((chip) => (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    className={`filter-more__option ${activeChip === chip.id ? 'selected' : ''}`}
+                    onClick={() => {
+                      onChipChange(chip.id);
+                      setMoreOpen(false);
+                    }}
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="desktop-only filter-chips-container__rest">
+          {moreChips.map(renderChip)}
+        </div>
       </div>
     </div>
   );

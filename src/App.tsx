@@ -1,18 +1,16 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { Navbar } from './components/Navbar';
+import { AppHeader, type ViewMode } from './components/AppHeader';
 import { FilterBar } from './components/FilterBar';
+import { FingerGuideTip } from './components/FingerGuideTip';
 import { ChordCard } from './components/ChordCard';
 import { Modal } from './components/Modal';
 import { PracticeList, matchesTuning, reorderSavedItems } from './components/PracticeList';
 import { Tuner } from './components/Tuner';
 import { FretboardMap } from './components/FretboardMap';
-import { CustomDropdown } from './components/CustomDropdown';
-import { isChordInScale, SCALE_TYPES } from './data/scales';
+import { isChordInScale } from './data/scales';
 import type { ScaleType } from './data/scales';
 import { GDG_CHORDS, DAD_CHORDS, EBE_CHORDS, AEA_CHORDS, CGC_CHORDS, formatChordName } from './data/chords';
 import type { Chord, Tuning } from './data/chords';
-
-type ViewMode = 'library' | 'practice';
 
 const ESSENTIAL_CHORDS = [
   'G Major', 'C Major', 'D Major', 'E Minor', 'A Minor', 
@@ -36,22 +34,6 @@ const QUALITY_TO_FAMILY: Record<string, string> = {
   'Diminished': 'Diminished',
   'Augmented': 'Augmented',
 };
-
-const KEY_OPTIONS = [
-  { value: 'Any Key', label: 'Any Key' },
-  { value: 'C', label: 'C' },
-  { value: 'C# / Db', label: 'C# / Db' },
-  { value: 'D', label: 'D' },
-  { value: 'D# / Eb', label: 'D# / Eb' },
-  { value: 'E', label: 'E' },
-  { value: 'F', label: 'F' },
-  { value: 'F# / Gb', label: 'F# / Gb' },
-  { value: 'G', label: 'G' },
-  { value: 'G# / Ab', label: 'G# / Ab' },
-  { value: 'A', label: 'A' },
-  { value: 'A# / Bb', label: 'A# / Bb' },
-  { value: 'B', label: 'B' }
-];
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -206,19 +188,6 @@ function App() {
     setSavedItems(prev => reorderSavedItems(prev, activeTuning, fromIndex, toIndex));
   };
 
-  const legendDotStyle = {
-    display: 'inline-block',
-    width: '18px',
-    height: '18px',
-    borderRadius: '50%',
-    backgroundColor: 'var(--accent-color)',
-    color: 'white',
-    textAlign: 'center',
-    lineHeight: '18px',
-    fontSize: '0.7rem',
-    marginRight: '4px'
-  } as const;
-
   const groupedChords = useMemo(() => {
     const groups: Record<string, Chord[]> = {};
     const chordsList = viewMode === 'library' 
@@ -235,14 +204,14 @@ function App() {
     return groups;
   }, [filteredChords, viewMode, savedItems]);
 
-  const handleToggleMode = () => {
-    const nextMode = viewMode === 'library' ? 'practice' : 'library';
+  const handleViewModeChange = (mode: ViewMode) => {
+    if (mode === viewMode) return;
     if (!document.startViewTransition) {
-      setViewMode(nextMode);
+      setViewMode(mode);
       return;
     }
     document.startViewTransition(() => {
-      setViewMode(nextMode);
+      setViewMode(mode);
     });
   };
 
@@ -273,174 +242,19 @@ function App() {
   return (
     <>
       <div className="container" style={{ paddingBottom: '4rem' }}>
-        <Navbar>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button 
-              className="primary"
-              onClick={() => setIsFretboardOpen(true)}
-              style={{ 
-                background: 'transparent', 
-                color: 'var(--text-main)', 
-                border: '1px solid var(--border-color)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.6rem 1rem'
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="3" x2="18" y2="21"></line><line x1="14" y1="3" x2="14" y2="21"></line><line x1="10" y1="3" x2="10" y2="21"></line><line x1="6" y1="3" x2="6" y2="21"></line><line x1="2" y1="6" x2="22" y2="6"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="18" x2="22" y2="18"></line></svg>
-              Fretboard
-            </button>
-            <button 
-              className="primary"
-              onClick={() => setIsTunerOpen(true)}
-            style={{ 
-              background: 'transparent', 
-              color: 'var(--text-main)', 
-              border: '1px solid var(--border-color)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.6rem 1rem'
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 18V5l12-2v13"></path>
-              <circle cx="6" cy="18" r="3"></circle>
-              <circle cx="18" cy="16" r="3"></circle>
-            </svg>
-            Tuner
-          </button>
-          </div>
-          <button 
-            className="primary" 
-            onClick={handleToggleMode}
-            style={{ position: 'relative' }}
-          >
-            {viewMode === 'library' ? 'Practice Mode' : 'Back to Library'}
-            {savedItems.length > 0 && viewMode === 'library' && (
-              <span style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                backgroundColor: '#ef4444',
-                color: 'white',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.75rem',
-                fontWeight: 'bold',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-              }}>
-                {savedItems.length}
-              </span>
-            )}
-          </button>
-        </Navbar>
-
-        {/* Legend and Tuning Selector */}
-        <div className="settings-bar" style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1.5rem',
-        }}>
-          {/* Settings Group */}
-          <div className="settings-group" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            {/* Tuning Selector */}
-            <div className="settings-control" style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.75rem',
-              backgroundColor: 'var(--surface-color)',
-              padding: '0.75rem 1.2rem',
-              borderRadius: 'var(--radius)',
-              border: '1px solid var(--border-color)',
-            }}>
-              <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Tuning:</span>
-              <CustomDropdown 
-                value={activeTuning}
-                onChange={(val) => setActiveTuning(val as Tuning)}
-                options={[
-                  { value: 'GDG', label: 'G-D-G' },
-                  { value: 'DAD', label: 'D-A-D' },
-                  { value: 'EBE', label: 'E-B-E' },
-                  { value: 'AEA', label: 'A-E-A (Beta)' },
-                  { value: 'CGC', label: 'C-G-C (Beta)' }
-                ]}
-              />
-            </div>
-            
-            {/* Key Selector */}
-            <div className="settings-control" style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.75rem',
-              backgroundColor: 'var(--surface-color)',
-              padding: '0.75rem 1.2rem',
-              borderRadius: 'var(--radius)',
-              border: '1px solid var(--border-color)',
-            }}>
-              <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Key:</span>
-              <CustomDropdown 
-                value={activeKey}
-                onChange={(val) => {
-                  if (activeKey === 'Any Key' && val !== 'Any Key') {
-                    setActiveScaleType('Major');
-                  }
-                  setActiveKey(val);
-                }}
-                options={KEY_OPTIONS}
-              />
-            </div>
-
-            {/* Scale Selector */}
-            {activeKey !== 'Any Key' && (
-              <div className="settings-control" style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.75rem',
-                backgroundColor: 'var(--surface-color)',
-                padding: '0.75rem 1.2rem',
-                borderRadius: 'var(--radius)',
-                border: '1px solid var(--border-color)',
-                animation: 'fadeIn 0.2s ease-out'
-              }}>
-                <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Scale:</span>
-                <CustomDropdown 
-                  value={activeScaleType}
-                  onChange={(val) => setActiveScaleType(val as ScaleType)}
-                  options={SCALE_TYPES.map(type => ({ value: type, label: type }))}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Finger Guide */}
-          <div className="finger-guide" style={{
-            display: 'flex',
-            gap: '1rem',
-            fontSize: '0.85rem',
-            color: 'var(--text-muted)',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            backgroundColor: 'var(--surface-color)',
-            padding: '0.75rem 1.2rem',
-            borderRadius: 'var(--radius)',
-            border: '1px solid var(--border-color)',
-          }}>
-            <span style={{ fontWeight: 'bold' }}>Finger Guide:</span>
-            <span><span style={legendDotStyle}>1</span> Index</span>
-            <span><span style={legendDotStyle}>2</span> Middle</span>
-            <span><span style={legendDotStyle}>3</span> Ring</span>
-            <span><span style={legendDotStyle}>4</span> Pinky</span>
-          </div>
-        </div>
+        <AppHeader
+          viewMode={viewMode}
+          onViewModeChange={handleViewModeChange}
+          activeTuning={activeTuning}
+          onTuningChange={setActiveTuning}
+          activeKey={activeKey}
+          onKeyChange={setActiveKey}
+          activeScaleType={activeScaleType}
+          onScaleTypeChange={setActiveScaleType}
+          savedCount={savedItems.length}
+          onOpenFretboard={() => setIsFretboardOpen(true)}
+          onOpenTuner={() => setIsTunerOpen(true)}
+        />
 
         {viewMode === 'library' ? (
           <FilterBar
@@ -480,12 +294,16 @@ function App() {
           </div>
         ) : viewMode === 'practice' && practiceEntries.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
-            <p>No chords saved for practice yet. Go back to the library and save some!</p>
+            <p>No chords saved for practice yet. Switch to Library and save some!</p>
           </div>
         ) : viewMode === 'library' ? (
           <div>
             {activeKey !== 'Any Key' ? (
-              <div className="chord-grid chord-grid-responsive">
+              <>
+                <div className="library-section-heading">
+                  <FingerGuideTip />
+                </div>
+                <div className="chord-grid chord-grid-responsive">
                 {filteredChords.map((chord, idx) => {
                   const isExpanded = expandedChordInfo?.chord.id === chord.id;
                   return (
@@ -501,10 +319,14 @@ function App() {
                   );
                 })}
               </div>
+              </>
             ) : (
-              FAMILY_ORDER.filter(family => groupedChords[family]?.length > 0).map(family => (
+              FAMILY_ORDER.filter(family => groupedChords[family]?.length > 0).map((family, familyIdx) => (
                 <div key={family} className="family-section">
-                  <h3 className="family-section-header">{family}</h3>
+                  <h3 className="family-section-header">
+                    {family}
+                    {familyIdx === 0 && <FingerGuideTip />}
+                  </h3>
                   <div className="chord-grid chord-grid-responsive">
                     {groupedChords[family].map((chord, idx) => {
                       const isExpanded = expandedChordInfo?.chord.id === chord.id;
