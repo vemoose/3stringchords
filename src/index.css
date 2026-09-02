@@ -148,6 +148,9 @@ button.primary:hover {
 
 /* App header */
 .app-header-group {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   margin-left: -1.5rem;
   margin-right: -1.5rem;
   margin-top: 1rem;
@@ -159,28 +162,25 @@ button.primary:hover {
   overflow: visible;
 }
 
-.app-header-settings {
-  position: relative;
-  z-index: 55;
-  padding: 0.75rem 1.5rem;
-  overflow: visible;
-  border-radius: 0 0 calc(var(--radius) - 1px) calc(var(--radius) - 1px);
-}
-
 .app-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
   background: var(--surface-color);
 }
 
 .app-header--mobile {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
+  padding: 0.65rem 1rem 0.75rem;
+  border-radius: calc(var(--radius) - 1px);
+}
+
+.app-header__top-row {
+  display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem 0.6rem;
-  border-bottom: 1px solid var(--border-color);
-  border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+  width: 100%;
+  min-width: 0;
 }
 
 .app-header--mobile .view-tabs {
@@ -189,44 +189,78 @@ button.primary:hover {
 }
 
 .app-header--desktop {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  gap: 0.65rem 1rem;
   align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 1.5rem;
-  flex-wrap: wrap;
+  padding: 0.75rem 1.25rem;
   border-radius: calc(var(--radius) - 1px);
-}
-
-.app-header-group--practice .app-header--desktop {
-  border-radius: calc(var(--radius) - 1px);
-}
-
-.app-header-group--practice .app-header--mobile {
-  border-bottom: none;
-  border-radius: calc(var(--radius) - 1px);
-}
-
-.app-header__theme {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-shrink: 0;
-}
-
-.app-header--mobile .app-header__theme {
-  flex-shrink: 0;
 }
 
 .app-header--desktop .view-tabs {
+  grid-column: 1;
+  grid-row: 1;
   width: auto;
   flex-shrink: 0;
+  min-width: 0;
 }
 
-.app-header__trailing {
+.app-header--desktop .header-divider {
+  display: none;
+}
+
+.app-header--desktop .header-settings-group {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  flex: none;
+  width: 100%;
+}
+
+.app-header-group--practice .app-header--desktop {
+  grid-template-rows: auto;
+  border-radius: calc(var(--radius) - 1px);
+}
+
+.app-header-group--practice .app-header--desktop .header-settings-group {
+  display: none;
+}
+
+.app-header-group--practice .app-header--mobile {
+  border-radius: calc(var(--radius) - 1px);
+}
+
+.app-header__actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   flex-shrink: 0;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.header-coffee-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  background: var(--surface-color);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.header-coffee-link:hover {
+  background: var(--bg-color);
+  border-color: var(--text-muted);
+  transform: translateY(-1px);
+  text-decoration: none;
 }
 
 .theme-toggle-btn {
@@ -1215,12 +1249,70 @@ dialog.expanded-chord-modal::backdrop {
 @media (min-width: 769px) {
   .app-header--desktop .view-tab {
     flex: 0 1 auto;
-    padding: 0.5rem 2.75rem;
+    padding: 0.5rem 1.75rem;
   }
 
   .app-header--desktop .theme-toggle-btn {
     border: 1px solid var(--border-color);
     padding: 0.6rem;
+  }
+
+  .header-tool-btn__hint {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 899px) {
+  .header-coffee-link__label {
+    display: none;
+  }
+
+  .header-coffee-link {
+    padding: 0.6rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .app-header--desktop {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .app-header--desktop .view-tabs {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .app-header--desktop .header-divider {
+    display: block;
+  }
+
+  .app-header--desktop .header-settings-group {
+    grid-column: auto;
+    grid-row: auto;
+    flex: 1;
+    width: auto;
+  }
+
+  .app-header__actions {
+    grid-column: auto;
+    grid-row: auto;
+    margin-left: auto;
+  }
+
+  .app-header--desktop .view-tab {
+    padding: 0.5rem 2.75rem;
+  }
+
+  .header-tool-btn__hint {
+    display: inline;
+  }
+
+  .header-coffee-link__label {
+    display: inline;
   }
 }
 
@@ -1238,13 +1330,12 @@ dialog.expanded-chord-modal::backdrop {
   }
 
   .app-header--mobile {
-    padding: 0.5rem 1rem 0.6rem;
-    gap: 0.45rem;
+    padding: 0.6rem 1rem 0.75rem;
+    gap: 0.6rem;
   }
 
-  .app-header-settings {
-    padding: 0.5rem 1rem 0.65rem;
-    border-top: 1px solid var(--border-color);
+  .app-header__top-row {
+    gap: 0.45rem;
   }
 
   .view-tab {

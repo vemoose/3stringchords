@@ -282,32 +282,10 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   return (
     <div className={`app-header-group${viewMode === 'practice' ? ' app-header-group--practice' : ''}`}>
       <header className="app-header app-header--mobile mobile-only">
-        {viewTabs}
-        {viewMode === 'practice' && mobileMoreMenu}
-      </header>
-
-      <header className="app-header app-header--desktop desktop-only">
-        {viewTabs}
-
-        {viewMode === 'library' && (
-          <>
-            <div className="header-divider" aria-hidden="true" />
-            <div className="header-settings-group">
-              {libraryControls}
-            </div>
-          </>
-        )}
-
-        <div className="app-header__trailing">
-          <div className="header-divider" aria-hidden="true" />
-          <div className="app-header__theme">
-            {themeToggleBtn}
-          </div>
+        <div className="app-header__top-row">
+          {viewTabs}
         </div>
-      </header>
-
-      {viewMode === 'library' && (
-        <div className="app-header-settings mobile-only">
+        {viewMode === 'library' && (
           <div className="mobile-filter-row">
             <CustomDropdown
               variant="compact"
@@ -323,8 +301,36 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             />
             {mobileMoreMenu}
           </div>
+        )}
+      </header>
+
+      <header className="app-header app-header--desktop desktop-only">
+        {viewTabs}
+
+        {viewMode === 'library' && (
+          <>
+            <div className="header-divider" aria-hidden="true" />
+            <div className="header-settings-group">
+              {libraryControls}
+            </div>
+          </>
+        )}
+
+        <div className="app-header__actions">
+          <a
+            href="https://ko-fi.com/vemoose"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="header-coffee-link"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            <span className="header-coffee-link__label">Buy me a coffee</span>
+          </a>
+          {themeToggleBtn}
         </div>
-      )}
+      </header>
     </div>
   );
 };
