@@ -11,6 +11,16 @@ export function disablePracticeExportMode(element: HTMLElement): void {
   element.classList.remove('practice-export-mode');
 }
 
+export function isMobileExportDevice(): boolean {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function waitForPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  });
+}
+
 function uniquifySvgIds(root: HTMLElement, suffix: string): void {
   const idMap = new Map<string, string>();
 
@@ -47,10 +57,7 @@ function createCaptureClone(source: HTMLElement): HTMLElement {
   return clone;
 }
 
-export async function capturePracticeSnapshot(
-  element: HTMLElement,
-  filename: string,
-): Promise<void> {
+export async function renderPracticeSnapshotPng(element: HTMLElement): Promise<string> {
   const host = document.createElement('div');
   host.className = 'practice-export-capture-host';
   const clone = createCaptureClone(element);
@@ -58,24 +65,144 @@ export async function capturePracticeSnapshot(
   document.body.appendChild(host);
 
   await document.fonts.ready;
-  await new Promise<void>((resolve) => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-  });
+  await waitForPaint();
 
   try {
-    const dataUrl = await toPng(clone, {
+    return await toPng(clone, {
       pixelRatio: 2,
       backgroundColor: '#ffffff',
       cacheBust: true,
     });
-
-    const link = document.createElement('a');
-    link.download = filename;
-    link.href = dataUrl;
-    link.click();
   } finally {
     host.remove();
   }
+}
+
+async function dataUrlToFile(dataUrl: string, filename: string): Promise<File> {
+  const response = await fetch(dataUrl);
+  const blob = await response.blob();
+  return new File([blob], filename, { type: 'image/png' });
+}
+
+export function canSharePracticeSnapshot(): boolean {
+  return typeof navigator.share === 'function' && typeof navigator.canShare === 'function';
+}
+
+export async function sharePracticeSnapshotFile(
+  dataUrl: string,
+  filename: string,
+): Promise<boolean> {
+  if (!canSharePracticeSnapshot()) return false;
+
+  const file = await dataUrlToFile(dataUrl, filename);
+  if (!navigator.canShare?.({ files: [file] })) return false;
+
+  await navigator.share({
+    files: [file],
+    title: 'Practice Set',
+  });
+
+  return true;
+}
+
+export function downloadPracticeSnapshot(dataUrl: string, filename: string): void {
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = dataUrl;
+  link.click();
+}
+
+export function printPracticeSnapshotImage(dataUrl: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.cssText =
+      'position:fixed;width:0;height:0;border:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(iframe);
+
+    const win = iframe.contentWindow;
+    const doc = iframe.contentDocument;
+    if (!win || !doc) {
+      iframe.remove();
+      reject(new Error('Unable to open print frame'));
+      return;
+    }
+
+    let settled = false;
+    const cleanup = () => {
+      if (settled) return;
+      settled = true;
+      win.removeEventListener('afterprint', cleanup);
+      iframe.remove();
+      resolve();
+    };
+
+    win.addEventListener('afterprint', cleanup);
+
+    doc.open();
+    doc.write(`<!DOCTYPE html>
+<html>
+  <head>
+    <title>Practice Set</title>
+    <style>
+      @page { size: letter portrait; margin: 0.25in; }
+      html, body { margin: 0; padding: 0; }
+      img { display: block; width: 100%; height: auto; }
+    </style>
+  </head>
+  <body>
+    <img src="${dataUrl}" alt="Practice Set" />
+  </body>
+</html>`);
+    doc.close();
+
+    const img = doc.querySelector('img');
+    if (!img) {
+      cleanup();
+      reject(new Error('Unable to prepare print image'));
+      return;
+    }
+
+    const print = () => {
+      try {
+        win.focus();
+        win.print();
+      } catch (error) {
+        if (!settled) {
+          settled = true;
+          win.removeEventListener('afterprint', cleanup);
+          iframe.remove();
+          reject(error);
+        }
+      }
+    };
+
+    if (img.complete) {
+      print();
+    } else {
+      img.onload = print;
+      img.onerror = () => {
+        cleanup();
+        reject(new Error('Unable to load print image'));
+      };
+    }
+
+    window.setTimeout(cleanup, 60_000);
+  });
+}
+
+export async function capturePracticeSnapshot(
+  element: HTMLElement,
+  filename: string,
+): Promise<void> {
+  const dataUrl = await renderPracticeSnapshotPng(element);
+  downloadPracticeSnapshot(dataUrl, filename);
+}
+
+export async function printPracticeSheet(element: HTMLElement): Promise<void> {
+  enablePracticeExportMode(element);
+  await waitForPaint();
+  window.print();
 }
 
 export function practiceSnapshotFilename(tuning: string): string {

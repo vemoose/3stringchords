@@ -1522,6 +1522,82 @@ dialog.expanded-chord-modal::backdrop {
   cursor: not-allowed;
 }
 
+.practice-snapshot-modal__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.practice-snapshot-modal__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.practice-snapshot-modal__hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.practice-snapshot-modal__image-wrap {
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--radius) - 2px);
+  background: #fff;
+}
+
+.practice-snapshot-modal__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-touch-callout: default;
+  user-select: none;
+}
+
+.practice-snapshot-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.practice-snapshot-modal__btn {
+  flex: 1 1 140px;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.practice-snapshot-modal__btn:hover:not(:disabled) {
+  border-color: var(--accent-color);
+  background: var(--bg-color);
+  transform: none;
+}
+
+.practice-snapshot-modal__btn--primary {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+}
+
+.practice-snapshot-modal__btn--primary:hover:not(:disabled) {
+  background: light-dark(#047857, #059669);
+  border-color: light-dark(#047857, #059669);
+}
+
+.practice-snapshot-modal__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .practice-print-header {
   display: none;
 }

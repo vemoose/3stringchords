@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 interface PracticeExportDropdownProps {
   disabled?: boolean;
   isSaving?: boolean;
+  isPreparingPrint?: boolean;
   onPrint: () => void;
   onSaveImage: () => void;
 }
@@ -10,6 +11,7 @@ interface PracticeExportDropdownProps {
 export function PracticeExportDropdown({
   disabled = false,
   isSaving = false,
+  isPreparingPrint = false,
   onPrint,
   onSaveImage,
 }: PracticeExportDropdownProps) {
@@ -79,8 +81,9 @@ export function PracticeExportDropdown({
             role="menuitem"
             className="practice-export-dropdown__option"
             onClick={handlePrint}
+            disabled={isPreparingPrint}
           >
-            Print
+            {isPreparingPrint ? 'Preparing…' : 'Print'}
           </button>
           <button
             type="button"

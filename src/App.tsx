@@ -6,6 +6,7 @@ import { ChordCard } from './components/ChordCard';
 import { Modal } from './components/Modal';
 import { PracticeList, getPracticeSavedItems, practiceItemId, reorderSavedItems, type SavedItem } from './components/PracticeList';
 import { PracticeExportDropdown } from './components/PracticeExportDropdown';
+import { PracticeSnapshotModal } from './components/PracticeSnapshotModal';
 import { Tuner } from './components/Tuner';
 import { FretboardMap } from './components/FretboardMap';
 import { isChordInScale } from './data/scales';
@@ -13,10 +14,12 @@ import type { ScaleType } from './data/scales';
 import { GDG_CHORDS, DAD_CHORDS, EBE_CHORDS, AEA_CHORDS, CGC_CHORDS, formatChordName } from './data/chords';
 import type { Chord, Tuning } from './data/chords';
 import {
-  capturePracticeSnapshot,
   disablePracticeExportMode,
-  enablePracticeExportMode,
+  downloadPracticeSnapshot,
+  isMobileExportDevice,
   practiceSnapshotFilename,
+  printPracticeSheet,
+  renderPracticeSnapshotPng,
 } from './utils/capturePracticeSnapshot';
 
 const ESSENTIAL_CHORDS = [
@@ -113,9 +116,15 @@ function App() {
   const [activeKey, setActiveKey] = useState<string>('Any Key');
   const [activeScaleType, setActiveScaleType] = useState<ScaleType>('Major');
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const snapshotDialogRef = useRef<HTMLDialogElement>(null);
   const practicePrintRef = useRef<HTMLDivElement>(null);
   const savedItemsHydrated = useRef(false);
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
+  const [isPreparingPrint, setIsPreparingPrint] = useState(false);
+  const [snapshotPreview, setSnapshotPreview] = useState<{
+    dataUrl: string;
+    action: 'save' | 'print';
+  } | null>(null);
 
   const currentChords = activeTuning === 'GDG' ? GDG_CHORDS : activeTuning === 'DAD' ? DAD_CHORDS : activeTuning === 'EBE' ? EBE_CHORDS : activeTuning === 'AEA' ? AEA_CHORDS : CGC_CHORDS;
 
@@ -309,11 +318,29 @@ function App() {
     });
   };
 
-  const handlePrintPractice = () => {
+  const handlePrintPractice = async () => {
     const el = practicePrintRef.current;
-    if (!el) return;
-    enablePracticeExportMode(el);
-    window.print();
+    if (!el || practiceEntries.length === 0) return;
+
+    if (isMobileExportDevice()) {
+      setIsPreparingPrint(true);
+      try {
+        const dataUrl = await renderPracticeSnapshotPng(el);
+        setSnapshotPreview({ dataUrl, action: 'print' });
+        setTimeout(() => snapshotDialogRef.current?.showModal(), 0);
+      } catch (error) {
+        console.error('Failed to prepare practice print', error);
+      } finally {
+        setIsPreparingPrint(false);
+      }
+      return;
+    }
+
+    try {
+      await printPracticeSheet(el);
+    } catch (error) {
+      console.error('Failed to print practice sheet', error);
+    }
   };
 
   const handleSavePracticeSnapshot = async () => {
@@ -322,12 +349,25 @@ function App() {
 
     setIsSavingSnapshot(true);
     try {
-      await capturePracticeSnapshot(el, practiceSnapshotFilename(activeTuning));
+      const filename = practiceSnapshotFilename(activeTuning);
+      const dataUrl = await renderPracticeSnapshotPng(el);
+
+      if (isMobileExportDevice()) {
+        setSnapshotPreview({ dataUrl, action: 'save' });
+        setTimeout(() => snapshotDialogRef.current?.showModal(), 0);
+      } else {
+        downloadPracticeSnapshot(dataUrl, filename);
+      }
     } catch (error) {
       console.error('Failed to save practice snapshot', error);
     } finally {
       setIsSavingSnapshot(false);
     }
+  };
+
+  const handleCloseSnapshotPreview = () => {
+    snapshotDialogRef.current?.close();
+    setSnapshotPreview(null);
   };
 
   return (
@@ -364,6 +404,7 @@ function App() {
               <PracticeExportDropdown
                 disabled={practiceEntries.length === 0}
                 isSaving={isSavingSnapshot}
+                isPreparingPrint={isPreparingPrint}
                 onPrint={handlePrintPractice}
                 onSaveImage={handleSavePracticeSnapshot}
               />
@@ -499,6 +540,14 @@ function App() {
           />
         )}
       </Modal>
+
+      <PracticeSnapshotModal
+        dialogRef={snapshotDialogRef}
+        dataUrl={snapshotPreview?.dataUrl ?? null}
+        filename={practiceSnapshotFilename(activeTuning)}
+        initialAction={snapshotPreview?.action ?? 'save'}
+        onClose={handleCloseSnapshotPreview}
+      />
 
       <Tuner isOpen={isTunerOpen} onClose={() => setIsTunerOpen(false)} tuning={activeTuning} />
       <FretboardMap isOpen={isFretboardOpen} onClose={() => setIsFretboardOpen(false)} tuning={activeTuning} />
