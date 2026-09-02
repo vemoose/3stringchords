@@ -4,7 +4,7 @@ import { FilterBar } from './components/FilterBar';
 import { FingerGuideTip } from './components/FingerGuideTip';
 import { ChordCard } from './components/ChordCard';
 import { Modal } from './components/Modal';
-import { PracticeList, matchesTuning, reorderSavedItems } from './components/PracticeList';
+import { PracticeList, matchesTuning, reorderSavedItems, type SavedItem } from './components/PracticeList';
 import { Tuner } from './components/Tuner';
 import { FretboardMap } from './components/FretboardMap';
 import { isChordInScale } from './data/scales';
@@ -39,7 +39,15 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeChip, setActiveChip] = useState('All');
   const [viewMode, setViewMode] = useState<ViewMode>('library');
-  const [savedItems, setSavedItems] = useState<{ chordId: string; variationId: string; tuning?: string }[]>([]);
+  const [savedItems, setSavedItems] = useState<SavedItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('savedChords');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      console.error('Failed to parse saved chords');
+      return [];
+    }
+  });
   const [expandedChordInfo, setExpandedChordInfo] = useState<{ chord: Chord, variationId: string } | null>(null);
   const [isTunerOpen, setIsTunerOpen] = useState(false);
   const [isFretboardOpen, setIsFretboardOpen] = useState(false);
@@ -47,23 +55,15 @@ function App() {
   const [activeKey, setActiveKey] = useState<string>('Any Key');
   const [activeScaleType, setActiveScaleType] = useState<ScaleType>('Major');
   const dialogRef = useRef<HTMLDialogElement>(null);
-  
+  const savedItemsHydrated = useRef(false);
+
   const currentChords = activeTuning === 'GDG' ? GDG_CHORDS : activeTuning === 'DAD' ? DAD_CHORDS : activeTuning === 'EBE' ? EBE_CHORDS : activeTuning === 'AEA' ? AEA_CHORDS : CGC_CHORDS;
 
-  // Load saved chords on mount
   useEffect(() => {
-    const saved = localStorage.getItem('savedChords');
-    if (saved) {
-      try {
-        setSavedItems(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse saved chords");
-      }
+    if (!savedItemsHydrated.current) {
+      savedItemsHydrated.current = true;
+      return;
     }
-  }, []);
-
-  // Save to localstorage when changes
-  useEffect(() => {
     localStorage.setItem('savedChords', JSON.stringify(savedItems));
   }, [savedItems]);
 
