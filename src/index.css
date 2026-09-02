@@ -1417,6 +1417,31 @@ dialog.expanded-chord-modal::backdrop {
   min-width: 0;
 }
 
+.practice-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .practice-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .practice-toolbar__actions {
+    order: -1;
+    justify-content: flex-end;
+  }
+
+  .practice-toolbar__hint {
+    flex: none;
+  }
+}
+
+.practice-toolbar__print-btn,
 .practice-toolbar__clear-btn {
   flex-shrink: 0;
   background: transparent;
@@ -1428,10 +1453,318 @@ dialog.expanded-chord-modal::backdrop {
   white-space: nowrap;
 }
 
+.practice-toolbar__print-btn:hover:not(:disabled),
 .practice-toolbar__clear-btn:hover {
   border-color: var(--accent-color);
   background: var(--bg-color);
   transform: none;
+}
+
+.practice-toolbar__print-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.practice-export-dropdown {
+  position: relative;
+}
+
+.practice-export-dropdown__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.practice-export-dropdown__chevron {
+  transition: transform 0.2s ease;
+}
+
+.practice-export-dropdown__chevron--open {
+  transform: rotate(180deg);
+}
+
+.practice-export-dropdown__menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 100;
+  min-width: 140px;
+  padding: 0.35rem;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.practice-export-dropdown__option {
+  display: block;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.practice-export-dropdown__option:hover:not(:disabled) {
+  background: var(--bg-color);
+  box-shadow: none;
+  transform: none;
+}
+
+.practice-export-dropdown__option:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.practice-print-header {
+  display: none;
+}
+
+.practice-list-print-label {
+  display: none;
+}
+
+/* Shared practice sheet layout (print + snapshot export) */
+.practice-print-area.practice-export-mode {
+  box-sizing: border-box;
+  width: 816px;
+  max-width: 816px;
+  padding: 24px;
+  background: #fff;
+  color: #111;
+}
+
+.practice-export-capture-host {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.practice-print-area.practice-export-mode .practice-print-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.12in;
+  padding-bottom: 0.07in;
+  border-bottom: 1.5px solid #111;
+}
+
+.practice-print-area.practice-export-mode .practice-print-header__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: 'Outfit', system-ui, sans-serif;
+  color: #111;
+  letter-spacing: -0.01em;
+}
+
+.practice-print-area.practice-export-mode .practice-print-header__meta {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #555;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.practice-print-area.practice-export-mode .practice-list {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+.practice-print-area.practice-export-mode .practice-list-items {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 4.78in;
+  gap: 0.05in;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.practice-print-area.practice-export-mode .practice-list-controls {
+  display: none !important;
+}
+
+.practice-print-area.practice-export-mode .practice-list-item {
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  min-height: 4.78in;
+  max-height: 4.78in;
+  padding: 0;
+  box-sizing: border-box;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  overflow: hidden;
+  touch-action: auto;
+}
+
+.practice-print-area.practice-export-mode .practice-list-item--dragging {
+  opacity: 1;
+}
+
+.practice-print-area.practice-export-mode .practice-list-print-label {
+  position: absolute;
+  top: 0.05in;
+  left: 0.05in;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 0.24in;
+  height: 0.24in;
+  border-radius: 50%;
+  background: #059669 !important;
+  color: white !important;
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-family: 'Outfit', system-ui, sans-serif;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.practice-print-area.practice-export-mode .practice-list-card {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.practice-print-area.practice-export-mode .chord-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  background: white !important;
+  border: none !important;
+  cursor: default !important;
+  text-align: center;
+  opacity: 1 !important;
+  animation: none !important;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:first-child {
+  width: 100%;
+  flex: 0 0 auto;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  padding: 0.1in 0.08in 0.06in !important;
+  border-bottom: 1px solid #e5e5e5;
+  background: #fafafa;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:first-child > div:first-child {
+  width: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.03in !important;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:first-child > div:last-child {
+  display: none !important;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:nth-child(2) {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.05in 0.04in 0.06in;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:nth-child(2) > div {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:nth-child(n + 3) {
+  display: none !important;
+}
+
+.practice-print-area.practice-export-mode .chord-card h3 {
+  margin: 0 !important;
+  padding: 0 0.22in;
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  color: #111 !important;
+  letter-spacing: -0.01em;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:first-child > div:first-child > div:nth-child(2) {
+  margin-top: 0 !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.04in 0.08in !important;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:first-child > div:first-child > div:nth-child(2) > div {
+  font-size: 0.58rem !important;
+  color: #333 !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:first-child > div:first-child > div:nth-child(2) > div:last-child:not(:only-child) {
+  font-size: 0.54rem !important;
+  color: #555 !important;
+  font-weight: 600 !important;
+  padding: 0.02in 0.06in;
+  border-radius: 999px;
+  background: #efefef;
+}
+
+.practice-print-area.practice-export-mode .chord-card > div:first-child > div:first-child > div:nth-child(2) > div:last-child:not(:only-child) span {
+  font-weight: 700 !important;
+}
+
+.practice-print-area.practice-export-mode .chord-card svg {
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  max-height: 100%;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
 }
 
 .practice-list {
@@ -1593,3 +1926,44 @@ dialog.expanded-chord-modal::backdrop {
   }
 }
 
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0.25in;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #practice-print-area,
+  #practice-print-area * {
+    visibility: visible;
+  }
+
+  .container {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .practice-print-area.practice-export-mode {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0;
+  }
+
+  .practice-print-area.practice-export-mode .practice-list-item:nth-child(8n):not(:last-child) {
+    break-after: page;
+    page-break-after: always;
+  }
+}

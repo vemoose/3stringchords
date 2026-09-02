@@ -143,6 +143,10 @@ function SortablePracticeItem({
       style={style}
       className={`practice-list-item${isDragging ? ' practice-list-item--dragging' : ''}`}
     >
+      <span className="practice-list-print-label" aria-hidden="true">
+        {entry.displayIndex + 1}
+      </span>
+
       <div className="practice-list-controls" aria-label={`Position ${entry.displayIndex + 1} controls`}>
         <button
           type="button"

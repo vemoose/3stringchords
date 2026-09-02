@@ -5,12 +5,19 @@ import { FingerGuideTip } from './components/FingerGuideTip';
 import { ChordCard } from './components/ChordCard';
 import { Modal } from './components/Modal';
 import { PracticeList, getPracticeSavedItems, practiceItemId, reorderSavedItems, type SavedItem } from './components/PracticeList';
+import { PracticeExportDropdown } from './components/PracticeExportDropdown';
 import { Tuner } from './components/Tuner';
 import { FretboardMap } from './components/FretboardMap';
 import { isChordInScale } from './data/scales';
 import type { ScaleType } from './data/scales';
 import { GDG_CHORDS, DAD_CHORDS, EBE_CHORDS, AEA_CHORDS, CGC_CHORDS, formatChordName } from './data/chords';
 import type { Chord, Tuning } from './data/chords';
+import {
+  capturePracticeSnapshot,
+  disablePracticeExportMode,
+  enablePracticeExportMode,
+  practiceSnapshotFilename,
+} from './utils/capturePracticeSnapshot';
 
 const ESSENTIAL_CHORDS = [
   'G Major', 'C Major', 'D Major', 'E Minor', 'A Minor', 
@@ -33,6 +40,14 @@ const QUALITY_TO_FAMILY: Record<string, string> = {
   'sus4': 'Suspended',
   'Diminished': 'Diminished',
   'Augmented': 'Augmented',
+};
+
+const TUNING_LABELS: Record<Tuning, string> = {
+  GDG: 'G-D-G',
+  DAD: 'D-A-D',
+  EBE: 'E-B-E',
+  AEA: 'A-E-A',
+  CGC: 'C-G-C',
 };
 
 const SAVED_CHORDS_STORAGE_KEY = 'savedChords';
@@ -98,7 +113,9 @@ function App() {
   const [activeKey, setActiveKey] = useState<string>('Any Key');
   const [activeScaleType, setActiveScaleType] = useState<ScaleType>('Major');
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const practicePrintRef = useRef<HTMLDivElement>(null);
   const savedItemsHydrated = useRef(false);
+  const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
 
   const currentChords = activeTuning === 'GDG' ? GDG_CHORDS : activeTuning === 'DAD' ? DAD_CHORDS : activeTuning === 'EBE' ? EBE_CHORDS : activeTuning === 'AEA' ? AEA_CHORDS : CGC_CHORDS;
 
@@ -110,6 +127,17 @@ function App() {
     localStorage.setItem(SAVED_CHORDS_STORAGE_KEY, JSON.stringify(savedItems));
     localStorage.setItem(SAVED_CHORDS_VERSION_KEY, SAVED_CHORDS_VERSION);
   }, [savedItems]);
+
+  useEffect(() => {
+    const handleAfterPrint = () => {
+      if (practicePrintRef.current) {
+        disablePracticeExportMode(practicePrintRef.current);
+      }
+    };
+
+    window.addEventListener('afterprint', handleAfterPrint);
+    return () => window.removeEventListener('afterprint', handleAfterPrint);
+  }, []);
 
   const availableChips = useMemo(() => {
     const searchStr = searchTerm.toLowerCase();
@@ -281,6 +309,27 @@ function App() {
     });
   };
 
+  const handlePrintPractice = () => {
+    const el = practicePrintRef.current;
+    if (!el) return;
+    enablePracticeExportMode(el);
+    window.print();
+  };
+
+  const handleSavePracticeSnapshot = async () => {
+    const el = practicePrintRef.current;
+    if (!el || practiceEntries.length === 0) return;
+
+    setIsSavingSnapshot(true);
+    try {
+      await capturePracticeSnapshot(el, practiceSnapshotFilename(activeTuning));
+    } catch (error) {
+      console.error('Failed to save practice snapshot', error);
+    } finally {
+      setIsSavingSnapshot(false);
+    }
+  };
+
   return (
     <>
       <div className="container" style={{ paddingBottom: '4rem' }}>
@@ -311,13 +360,21 @@ function App() {
             <p className="practice-toolbar__hint">
               Drag the number or use the arrows to set your practice order
             </p>
-            <button
-              type="button"
-              className="practice-toolbar__clear-btn"
-              onClick={() => setSavedItems([])}
-            >
-              Clear All Saved
-            </button>
+            <div className="practice-toolbar__actions">
+              <PracticeExportDropdown
+                disabled={practiceEntries.length === 0}
+                isSaving={isSavingSnapshot}
+                onPrint={handlePrintPractice}
+                onSaveImage={handleSavePracticeSnapshot}
+              />
+              <button
+                type="button"
+                className="practice-toolbar__clear-btn"
+                onClick={() => setSavedItems([])}
+              >
+                Clear All Saved
+              </button>
+            </div>
           </div>
         )}
 
@@ -384,14 +441,23 @@ function App() {
             )}
           </div>
         ) : (
-          <PracticeList
-            entries={practiceEntries}
-            onReorder={handleReorder}
-            isSaved={isSaved}
-            onToggleSave={toggleSave}
-            onExpand={handleExpand}
-            expandedChordId={expandedChordInfo?.chord.id ?? null}
-          />
+          <div id="practice-print-area" ref={practicePrintRef} className="practice-print-area">
+            <header className="practice-print-header">
+              <h1 className="practice-print-header__title">Practice Set</h1>
+              <p className="practice-print-header__meta">
+                {TUNING_LABELS[activeTuning]} tuning · {practiceEntries.length}{' '}
+                {practiceEntries.length === 1 ? 'chord' : 'chords'}
+              </p>
+            </header>
+            <PracticeList
+              entries={practiceEntries}
+              onReorder={handleReorder}
+              isSaved={isSaved}
+              onToggleSave={toggleSave}
+              onExpand={handleExpand}
+              expandedChordId={expandedChordInfo?.chord.id ?? null}
+            />
+          </div>
         )}
       </div>
 
